@@ -4,8 +4,9 @@
 - pytorch官方文档: [https://pytorch.org/docs/](https://pytorch.org/docs/)
 
 
+## 启动命令
 
-### pytorch 安装
-```sh
-pip3 install torch torchvision torchaudio
+启动jupyter命令
+```shell
+jupyter notebook --config /home/mylady/.jupyter/jupyter_notebook_config.py
 ```

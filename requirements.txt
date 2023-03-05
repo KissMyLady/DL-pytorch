@@ -1,0 +1,10 @@
+# pip3 install torch torchvision torchaudio
+
+## 安装jupyter
+# pip install notebook
+# pip install jupyterlab
+# pip install jupyter_contrib_nbextensions
+# pip install jupyterthemes
+# pip install jupyterlab-language-pack-zh-CN
+
+# pip install colorlog
