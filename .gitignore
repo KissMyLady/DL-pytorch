@@ -1,0 +1,28 @@
+.idea/
+*.log
+*.zip
+*.svg
+*.pyc
+*.png
+*.pdf
+.ipynb_checkpoints
+# Linux 输出文件
+*.out
+
+# Mac
+.DS_Store
+
+# 忽略csv文件, 要下载csv, 使用url进行下载后再存放在代码
+# *.csv
+result/
+
+# jupyter忽略文件
+.ipynb_checkpoints/
+training_checkpoints/
+
+static/
+logs/
+SQLData/
+aDataFiles/
+
+__pycache__/
