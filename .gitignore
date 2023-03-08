@@ -15,6 +15,7 @@
 # 忽略csv文件, 要下载csv, 使用url进行下载后再存放在代码
 # *.csv
 result/
+train_data/*
 
 # jupyter忽略文件
 .ipynb_checkpoints/
