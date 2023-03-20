@@ -9,6 +9,9 @@
 # Linux 输出文件
 *.out
 
+# 训练后的权重文件
+*.pt
+
 # Mac
 .DS_Store
 
