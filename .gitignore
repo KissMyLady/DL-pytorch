@@ -8,6 +8,7 @@
 .ipynb_checkpoints
 # Linux 输出文件
 *.out
+*.csv
 
 # 训练后的权重文件
 *.pt
@@ -19,6 +20,7 @@
 # *.csv
 result/
 train_data/*
+data/*
 
 # jupyter忽略文件
 .ipynb_checkpoints/
