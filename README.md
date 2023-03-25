@@ -4,7 +4,7 @@
 - pytorch官方文档: [https://pytorch.org/docs/](https://pytorch.org/docs/)
 
 zh-d2l.ai书籍 在线阅读地址: 
-- [http://zh.d2l.ai/chapter_computer-vision/object-detection-dataset.html#id2](http://zh.d2l.ai/chapter_computer-vision/object-detection-dataset.html#id2)
+- [http://zh.d2l.ai/chapter_introduction/index.html](http://zh.d2l.ai/chapter_introduction/index.html)
 
 
 书籍下载地址: 

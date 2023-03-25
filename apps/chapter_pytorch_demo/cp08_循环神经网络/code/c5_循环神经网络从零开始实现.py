@@ -50,7 +50,7 @@ def rnn(inputs, state, params):
     return torch.cat(outputs, dim=0), (H,)
 
 
-class RNNModelScratch:  # @save
+class RNNModelScratch:
     """从零开始实现的循环神经网络模型"""
 
     def __init__(self, vocab_size, num_hiddens, device,
