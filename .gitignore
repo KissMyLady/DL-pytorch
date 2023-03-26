@@ -9,6 +9,12 @@
 # Linux 输出文件
 *.out
 *.csv
+*.mp4
+*.weights
+
+# 忽略章节目录
+# 李宏毅 机器学习2021/2022
+Lhy_Machine_Learning/
 
 # 训练后的权重文件
 *.pt
