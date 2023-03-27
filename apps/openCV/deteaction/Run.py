@@ -7,7 +7,8 @@ from ObjectDetection import ObjectDetection
 
 def run():
     od = ObjectDetection()
-    cap = cv2.VideoCapture("../data/test.mp4")
+    cap = cv2.VideoCapture("../data/2023-02-26-大疆mini2se的拍摄效果.mp4")
+    # cap = cv2.VideoCapture(0)
 
     while True:
         _, frame = cap.read()
