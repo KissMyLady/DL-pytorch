@@ -1,3 +1,11 @@
+# OpnCV4.0 中文文档
+
+在线阅读
+- [OpenCV 4.0 中文文档](https://opencv.apachecn.org/#/)
+- [Opencv-doc-zh](https://github.com/apachecn/opencv-doc-zh)
+
+
+
 # 利用pytorch进行深度学习
 
 - 参考书籍: [https://github.com/ShusenTang/Dive-into-DL-PyTorch](https://github.com/ShusenTang/Dive-into-DL-PyTorch)

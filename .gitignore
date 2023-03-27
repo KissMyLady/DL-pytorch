@@ -15,6 +15,7 @@
 # 忽略章节目录
 # 李宏毅 机器学习2021/2022
 Lhy_Machine_Learning/
+OpenCV_基础教程/
 
 # 训练后的权重文件
 *.pt
