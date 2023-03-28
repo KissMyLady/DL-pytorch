@@ -10,6 +10,8 @@ def test_1():
     # v = cv2.VideoCapture('./data/ttnk.mp4')
     # v = cv2.VideoCapture('./data/2023_03_28_14_34_25_684.mp4')
     v = cv2.VideoCapture('./data/2023_03_28_14_42_23_183_广场_僧侣.mp4')
+
+
     # cv2.VideoWriter()
     fps = v.get(propId=cv2.CAP_PROP_FPS)  # frame(帧) per second
     print(fps)

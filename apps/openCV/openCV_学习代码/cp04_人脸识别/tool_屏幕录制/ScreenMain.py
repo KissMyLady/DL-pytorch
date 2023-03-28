@@ -153,6 +153,7 @@ def main():
     width, high = screen.size
     video = ScreenshotVideo(width, high, fps=60)
     video.pre_video_record()  # 预录制获取最优fps
+
     video('test1.mp4')
     video.run()
     pass
