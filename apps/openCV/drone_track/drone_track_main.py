@@ -43,6 +43,7 @@ def on_mouse(event, x, y, flags, param):
             tracker.init(frame, bbox)
             isTracking = True
         pass
+    pass
 
 
 # 建立追踪器
