@@ -17,6 +17,10 @@
 Lhy_Machine_Learning/
 OpenCV_基础教程/
 
+**/data/*
+**/data/faces_dynamic/
+**/data/face/
+
 # 训练后的权重文件
 *.pt
 
@@ -27,7 +31,7 @@ OpenCV_基础教程/
 # *.csv
 result/
 train_data/*
-data/*
+
 
 # jupyter忽略文件
 .ipynb_checkpoints/

@@ -7,11 +7,13 @@ import numpy as np
 
 class ObjectDetection:
 
-    def __init__(self, weights_path="../data/weight/dnn_model/yolov4.weights", cfg_path="../data/weight/dnn_model/yolov4.cfg"):
+    def __init__(self, nmsThreshold=0.4, confThreshold=0.5,
+                 weights_path="../data/weight/dnn_model/yolov4.weights",
+                 cfg_path="../data/weight/dnn_model/yolov4.cfg"):
         print("Loading Object Detection")
         print("Running opencv dnn with YOLOv4")
-        self.nmsThreshold = 0.4
-        self.confThreshold = 0.5
+        self.nmsThreshold = nmsThreshold
+        self.confThreshold = confThreshold
         self.image_size = 608
 
         # Load Network
@@ -37,9 +39,13 @@ class ObjectDetection:
         self.colors = np.random.uniform(0, 255, size=(80, 3))
         return self.classes
 
+    def getObjectName(self, objId):
+        return self.classes[objId]
+
     def detect(self, frame):
         """
         :param frame: 每帧的图像
-        :return:
+        Threshold: 临界值
+        confThreshold: 置信度
         """
         return self.model.detect(frame, nmsThreshold=self.nmsThreshold, confThreshold=self.confThreshold)
