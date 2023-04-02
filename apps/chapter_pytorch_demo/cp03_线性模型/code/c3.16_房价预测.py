@@ -239,7 +239,10 @@ def run_v2():
 
 
 def main():
+    # 训练
     run_v1()
+    
+    # 训练并预测
     run_v2()
     pass
 
