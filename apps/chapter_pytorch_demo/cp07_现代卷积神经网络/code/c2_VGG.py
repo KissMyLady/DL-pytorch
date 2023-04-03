@@ -7,15 +7,23 @@ sys.path.append("..")
 
 
 def vgg_block(num_convs, in_channels, out_channels):
-    layers = []
+    layers = list()
 
+    # (1, 64) 
+    '''
+    num_convs:    遍历多少次
+    out_channels: 输出通道数
+    '''
     for _ in range(num_convs):
-        layers.append(nn.Conv2d(in_channels, out_channels,
-                      kernel_size=3, padding=1))
+        # 卷积层
+        layers.append(nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1))
+        # 激活函数
         layers.append(nn.ReLU())
+        # 重置通道数
         in_channels = out_channels
         pass
 
+    # 兜底, 最大池化层
     layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
     return nn.Sequential(*layers)
 
@@ -26,8 +34,13 @@ def vgg(conv_arch):
 
     # 卷积层部分
     for (num_convs, out_channels) in conv_arch:
-        conv_blks.append(vgg_block(num_convs, in_channels, out_channels))
+        # 添加重复vgg块 (1, 64)
+        vgg_black_item = vgg_block(num_convs, in_channels, out_channels)
+        conv_blks.append(vgg_black_item)
+
+        # 重置输入通道
         in_channels = out_channels
+        pass
 
     v_nn = nn.Sequential(
         *conv_blks, nn.Flatten(),
