@@ -2276,7 +2276,6 @@ def get_tokens_and_segments(tokens_a, tokens_b=None):
 
 class BERTEncoder(nn.Module):
     """BERT encoder.
-
     Defined in :numref:`subsec_bert_input_rep`"""
     def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,
                  ffn_num_hiddens, num_heads, num_layers, dropout,
@@ -2328,6 +2327,7 @@ class MaskLM(nn.Module):
         mlm_Y_hat = self.mlp(masked_X)
         return mlm_Y_hat
 
+
 class NextSentencePred(nn.Module):
     """The next sentence prediction task of BERT.
 
@@ -2340,22 +2340,37 @@ class NextSentencePred(nn.Module):
         # `X` shape: (batch size, `num_hiddens`)
         return self.output(X)
 
+
 class BERTModel(nn.Module):
     """The BERT model.
 
     Defined in :numref:`subsec_nsp`"""
-    def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,
-                 ffn_num_hiddens, num_heads, num_layers, dropout,
-                 max_len=1000, key_size=768, query_size=768, value_size=768,
-                 hid_in_features=768, mlm_in_features=768,
+    def __init__(self, vocab_size, num_hiddens, norm_shape, 
+                 ffn_num_input, ffn_num_hiddens, 
+                 num_heads, num_layers, 
+                 dropout,
+                 max_len=1000, 
+                 key_size=768, query_size=768, value_size=768,
+                 hid_in_features=768, 
+                 mlm_in_features=768,
                  nsp_in_features=768):
+        
         super(BERTModel, self).__init__()
-        self.encoder = BERTEncoder(vocab_size, num_hiddens, norm_shape,
-                    ffn_num_input, ffn_num_hiddens, num_heads, num_layers,
-                    dropout, max_len=max_len, key_size=key_size,
-                    query_size=query_size, value_size=value_size)
+
+        self.encoder = BERTEncoder(vocab_size,
+                                   num_hiddens, norm_shape,
+                                   ffn_num_input, ffn_num_hiddens, 
+                                   num_heads, num_layers,
+                                   dropout, 
+                                   max_len=max_len, 
+                                   key_size=key_size,
+                                   query_size=query_size, 
+                                   value_size=value_size
+                                   )
+        
         self.hidden = nn.Sequential(nn.Linear(hid_in_features, num_hiddens),
-                                    nn.Tanh())
+                                    nn.Tanh()
+                                    )
         self.mlm = MaskLM(vocab_size, num_hiddens, mlm_in_features)
         self.nsp = NextSentencePred(nsp_in_features)
 

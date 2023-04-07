@@ -21,6 +21,8 @@ import torchvision.transforms as transforms
 import torchtext
 import torchtext.vocab as Vocab
 import numpy as np
+from decimal import Decimal
+
 
 VOC_CLASSES = ['background', 'aeroplane', 'bicycle', 'bird', 'boat',
                'bottle', 'bus', 'car', 'cat', 'chair', 'cow',
@@ -574,16 +576,17 @@ def train_and_predict_rnn_pytorch(model, num_hiddens, vocab_size, device,
             n += y.shape[0]
 
         try:
-            perplexity = math.exp(l_sum / n)
-        except OverflowError:
+            # perplexity = math.exp(l_sum / n)
+            perplexity = Decimal(l_sum / n).exp()
+        except OverflowError as e:
+            print("困惑度计算失败: %s" % e)
             perplexity = float('inf')
+            pass
+    
         if (epoch + 1) % pred_period == 0:
-            print('epoch %d, perplexity %f, time %.2f sec' % (
-                epoch + 1, perplexity, time.time() - start))
+            print('epoch %d, perplexity %s, time %.2f sec' % (epoch + 1, perplexity, time.time() - start))
             for prefix in prefixes:
-                print(' -', predict_rnn_pytorch(
-                    prefix, pred_len, model, vocab_size, device, idx_to_char,
-                    char_to_idx))
+                print(' -', predict_rnn_pytorch(prefix, pred_len, model, vocab_size, device, idx_to_char,char_to_idx))
 
 
 # ######################################## 7.2 ###############################################
