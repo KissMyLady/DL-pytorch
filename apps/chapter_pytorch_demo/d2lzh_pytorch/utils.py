@@ -350,12 +350,12 @@ def resnet18(output=10, in_channels=3):
 # ############################## 6.3 ##################################3
 def load_data_jay_lyrics(read_file_path="/home/mylady/Datasets/RNN_data/jaychou_lyrics.txt.zip"):
     """加载周杰伦歌词数据集"""
-    with zipfile.ZipFile(read_file_path) as zin:
-        with zin.open('jaychou_lyrics.txt') as f:
-            corpus_chars = f.read().decode('utf-8')
+    # with zipfile.ZipFile(read_file_path) as zin:
+    #     with zin.open('jaychou_lyrics.txt') as f:
+    #         corpus_chars = f.read().decode('utf-8')
 
-    #with open(read_url_list_path_new, encoding='utf8') as f:
-    #   corpus_chars = f.read()
+    with open(read_file_path, encoding='utf8') as f:
+        corpus_chars = f.read()
 
     corpus_chars = corpus_chars.replace('\n', ' ').replace('\r', ' ')
     corpus_chars = corpus_chars[0:10000]
@@ -579,12 +579,21 @@ def train_and_predict_rnn_pytorch(model, num_hiddens, vocab_size, device,
             # perplexity = math.exp(l_sum / n)
             perplexity = Decimal(l_sum / n).exp()
         except OverflowError as e:
+<<<<<<< HEAD
             print("困惑度计算失败: %s" % e)
             perplexity = float('inf')
             pass
     
         if (epoch + 1) % pred_period == 0:
             print('epoch %d, perplexity %s, time %.2f sec' % (epoch + 1, perplexity, time.time() - start))
+=======
+            perplexity = float('inf')
+            pass
+
+        if (epoch + 1) % pred_period == 0:
+            print('epoch %d, perplexity %s, time %.2f sec' % (
+                epoch + 1, perplexity, time.time() - start))
+>>>>>>> 11531d2ec3e1ae9043a6c1e4af7dc23a40e65f09
             for prefix in prefixes:
                 print(' -', predict_rnn_pytorch(prefix, pred_len, model, vocab_size, device, idx_to_char,char_to_idx))
 
