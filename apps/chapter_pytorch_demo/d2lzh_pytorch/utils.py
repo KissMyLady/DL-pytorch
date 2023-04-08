@@ -579,21 +579,12 @@ def train_and_predict_rnn_pytorch(model, num_hiddens, vocab_size, device,
             # perplexity = math.exp(l_sum / n)
             perplexity = Decimal(l_sum / n).exp()
         except OverflowError as e:
-<<<<<<< HEAD
-            print("困惑度计算失败: %s" % e)
-            perplexity = float('inf')
-            pass
-    
-        if (epoch + 1) % pred_period == 0:
-            print('epoch %d, perplexity %s, time %.2f sec' % (epoch + 1, perplexity, time.time() - start))
-=======
             perplexity = float('inf')
             pass
 
         if (epoch + 1) % pred_period == 0:
             print('epoch %d, perplexity %s, time %.2f sec' % (
                 epoch + 1, perplexity, time.time() - start))
->>>>>>> 11531d2ec3e1ae9043a6c1e4af7dc23a40e65f09
             for prefix in prefixes:
                 print(' -', predict_rnn_pytorch(prefix, pred_len, model, vocab_size, device, idx_to_char,char_to_idx))
 
