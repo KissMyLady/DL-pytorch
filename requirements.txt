@@ -8,3 +8,7 @@
 # pip install jupyterlab-language-pack-zh-CN
 
 # pip install colorlog
+
+## huggingface
+# pip install datasets
+# pip install transformers
