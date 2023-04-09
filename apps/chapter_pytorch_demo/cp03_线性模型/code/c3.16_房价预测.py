@@ -11,7 +11,7 @@ import sys
 
 sys.path.append("..")
 # import d2lzh_pytorch as d2l
-from apps.chapter import d2lzh_pytorch as d2l
+from apps.chapter_pytorch_demo import d2lzh_pytorch as d2l
 
 
 print(torch.__version__)

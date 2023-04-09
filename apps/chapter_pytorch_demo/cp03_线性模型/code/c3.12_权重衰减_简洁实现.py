@@ -7,7 +7,7 @@ import torch.nn as nn
 
 import sys
 sys.path.append("../..")
-from apps.chapter import d2lzh_pytorch as d2l
+from apps.chapter_pytorch_demo import d2lzh_pytorch as d2l
 
 
 n_train = 20

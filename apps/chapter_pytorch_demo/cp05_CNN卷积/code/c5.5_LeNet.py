@@ -9,7 +9,7 @@ import sys
 
 sys.path.append("..")
 # import d2lzh_pytorch as d2l
-from apps.chapter import d2lzh_pytorch as d2l
+from apps.chapter_pytorch_demo import d2lzh_pytorch as d2l
 
 # 获取设备
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
