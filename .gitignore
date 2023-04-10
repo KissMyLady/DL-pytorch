@@ -24,6 +24,8 @@ OpenCV_基础教程/
 
 # 训练后的权重文件
 *.pt
+**/output_dir/*
+
 
 # Mac
 .DS_Store
