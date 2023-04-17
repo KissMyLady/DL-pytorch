@@ -10,7 +10,6 @@ from d2l import torch as d2l
 
 # 初始化模型参数
 def get_params(vocab_size, num_hiddens, device):
-
     num_inputs = num_outputs = vocab_size
 
     def normal(shape):
@@ -84,16 +83,12 @@ def predict_ch8(prefix, num_preds, net, vocab, device):  # @save
 
 # 裁剪梯度
 def grad_clipping(net, theta):  # @save
-    """
-    裁剪梯度
-    """
     if isinstance(net, nn.Module):
         params = [p for p in net.parameters() if p.requires_grad]
     else:
         params = net.params
 
     norm = torch.sqrt(sum(torch.sum((p.grad ** 2)) for p in params))
-
     if norm > theta:
         for param in params:
             param.grad[:] *= theta / norm

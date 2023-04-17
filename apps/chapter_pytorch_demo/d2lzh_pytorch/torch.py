@@ -810,6 +810,7 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
     """Train a model (defined in Chapter 8).
 
     Defined in :numref:`sec_rnn_scratch`"""
+    times = Timer()
     loss = nn.CrossEntropyLoss()
     animator = d2l.Animator(xlabel='epoch', ylabel='perplexity',
                             legend=['train'], xlim=[10, num_epochs])
@@ -826,6 +827,8 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
         if (epoch + 1) % 10 == 0:
             print(predict('time traveller'))
             animator.add(epoch + 1, [ppl])
+    times.stop()
+    print('Time consuming: %8.4f 秒' % times.sum())
     print(f'perplexity {ppl:.1f}, {speed:.1f} tokens/sec on {str(device)}')
     print(predict('time traveller'))
     print(predict('traveller'))
