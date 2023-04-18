@@ -134,6 +134,22 @@ class Timer:
         """Return the accumulated time."""
         return np.array(self.times).cumsum().tolist()
 
+    def final_time(self) -> str:
+        """返回最后记录的时间, 总计耗时"""
+        return "%8.4f" % self.times[-1]
+
+    def interval_consume(self) -> str:
+        """区间时间段计算"""
+        diffs = ['%.4f' % (y - x) for x, y in zip(self.times, self.times[1:])]
+        return str(diffs)
+
+    def __call__(self) -> str:
+        return str(['%.4f' % item for item in self.times])
+
+    def __str__(self) -> str:
+        return str(['%.4f' % item for item in self.times])
+
+
 def synthetic_data(w, b, num_examples):
     """Generate y = Xw + b + noise.
 
@@ -587,8 +603,23 @@ def tokenize(lines, token='word'):
     else:
         print('ERROR: unknown token type: ' + token)
 
+
+"""
+词元的类型是字符串，而模型需要的输入是数字，因此这种类型不方便模型使用。 现在，让我们[构建一个字典，通常也叫做词表（vocabulary），
+ 用来将字符串类型的词元映射到从0开始的数字索引中]。 我们先将训练集中的所有文档合并在一起，对它们的唯一词元进行统计， 得到的统计结
+ 果称之为语料（corpus）。 然后根据每个唯一词元的出现频率，为其分配一个数字索引。 很少出现的词元通常被移除，这可以降低复杂性。 
+ 另外，语料库中不存在或已删除的任何词元都将映射到一个特定的未知词元“<unk>”。 我们可以选择增加一个列表，用于保存那些被保留的词元， 
+ 例如：填充词元（“<pad>”）； 序列开始词元（“<bos>”）； 序列结束词元（“<eos>”）。
+"""
 class Vocab:
-    """Vocabulary for text."""
+    """Vocabulary for text.
+    名 称: 词汇表
+    封 装: 8.2节 文本预处理封装此类
+    作 用: 将字符串映射到从0开始的数字索引中.
+    调 用:
+        vocab = Vocab(tokens)
+        list(vocab.token_to_idx.items())[0:10]
+    """
     def __init__(self, tokens=None, min_freq=0, reserved_tokens=None):
         """Defined in :numref:`sec_text_preprocessing`"""
         if tokens is None:
@@ -596,19 +627,21 @@ class Vocab:
         if reserved_tokens is None:
             reserved_tokens = []
         # Sort according to frequencies
-        counter = count_corpus(tokens)
-        self._token_freqs = sorted(counter.items(), key=lambda x: x[1],
-                                   reverse=True)
-        # The index for the unknown token is 0
+        counter = count_corpus(tokens)  # 字数统计, 返回字典 ({}, {}) 形式数据
+        self._token_freqs = sorted(counter.items(), key=lambda x: x[1], reverse=True)  # 按照频率排序
+        # 未知 unknown 词元在0首位
         self.idx_to_token = ['<unk>'] + reserved_tokens
-        self.token_to_idx = {token: idx
-                             for idx, token in enumerate(self.idx_to_token)}
+        self.token_to_idx = {token: idx for idx, token in enumerate(self.idx_to_token)}  # 初始化
+
+        # 遍历字典
         for token, freq in self._token_freqs:
+            # 很少出现的词被移除
             if freq < min_freq:
                 break
+            # 如果当前词还没遍历过
             if token not in self.token_to_idx:
-                self.idx_to_token.append(token)
-                self.token_to_idx[token] = len(self.idx_to_token) - 1
+                self.idx_to_token.append(token)  # 添加到 idx_to_token ['<unk>', 'he', 'is', 'pirate']
+                self.token_to_idx[token] = len(self.idx_to_token) - 1  # 添加到 token_to_idx['1025', '999', '68', '12']
 
     def __len__(self):
         return len(self.idx_to_token)
@@ -624,13 +657,15 @@ class Vocab:
         return [self.idx_to_token[index] for index in indices]
 
     @property
-    def unk(self):  # Index for the unknown token
+    def unk(self):  # 未知词元的索引为0
         return 0
 
     @property
-    def token_freqs(self):  # Index for the unknown token
+    def token_freqs(self):  # 返回频率字典
         return self._token_freqs
 
+
+# 字数统计, 返回字典 ({'词': '频率'}) 形式数据
 def count_corpus(tokens):
     """Count token frequencies.
 
@@ -639,7 +674,10 @@ def count_corpus(tokens):
     if len(tokens) == 0 or isinstance(tokens[0], list):
         # Flatten a list of token lists into a list of tokens
         tokens = [token for line in tokens for token in line]
+
+    # python内置方法调用, 返回统计
     return collections.Counter(tokens)
+
 
 def load_corpus_time_machine(max_tokens=-1):
     """Return token indices and the vocabulary of the time machine dataset.
@@ -921,8 +959,7 @@ def show_list_len_pair_hist(legend, xlabel, ylabel, xlist, ylist):
 
     Defined in :numref:`sec_machine_translation`"""
     d2l.set_figsize()
-    _, _, patches = d2l.plt.hist(
-        [[len(l) for l in xlist], [len(l) for l in ylist]])
+    _, _, patches = d2l.plt.hist([[len(l) for l in xlist], [len(l) for l in ylist]])
     d2l.plt.xlabel(xlabel)
     d2l.plt.ylabel(ylabel)
     for patch in patches[1].patches:
@@ -2082,14 +2119,18 @@ d2l.DATA_HUB['dog_tiny'] = (d2l.DATA_URL + 'kaggle_dog_tiny.zip',
 d2l.DATA_HUB['ptb'] = (d2l.DATA_URL + 'ptb.zip',
                        '319d85e578af0cdc590547f26231e4e31cdf1e42')
 
-def read_ptb():
+def read_ptb(filePath=None):
     """Load the PTB dataset into a list of text lines.
 
     Defined in :numref:`sec_word2vec_data`"""
     data_dir = d2l.download_extract('ptb')
     # Read the training set.
-    with open(os.path.join(data_dir, 'ptb.train.txt')) as f:
-        raw_text = f.read()
+    if filePath is not None:
+        with open(os.path.join(filePath, 'ptb.train.txt')) as f:
+            raw_text = f.read()
+    else:
+        with open(os.path.join(data_dir, 'ptb.train.txt')) as f:
+            raw_text = f.read()
     return [line.split() for line in raw_text.split('\n')]
 
 def subsample(sentences, vocab):
@@ -2155,9 +2196,12 @@ def get_negatives(all_contexts, vocab, counter, K):
     Defined in :numref:`sec_word2vec_data`"""
     # Sampling weights for words with indices 1, 2, ... (index 0 is the
     # excluded unknown token) in the vocabulary
-    sampling_weights = [counter[vocab.to_tokens(i)]**0.75
-                        for i in range(1, len(vocab))]
+
+    # 采样概率计算
+    sampling_weights = [counter[vocab.to_tokens(i)]**0.75 for i in range(1, len(vocab))]
     all_negatives, generator = [], RandomGenerator(sampling_weights)
+
+    # 遍历上下文
     for contexts in all_contexts:
         negatives = []
         while len(negatives) < len(contexts) * K:
@@ -2188,12 +2232,12 @@ def load_data_ptb(batch_size, max_window_size, num_noise_words):
 
     Defined in :numref:`subsec_word2vec-minibatch-loading`"""
     num_workers = d2l.get_dataloader_workers()
-    sentences = read_ptb()
+    filePath='/home/mylady/code/python/DL-pytorch/apps/chapter_pytorch_demo/data'
+    sentences = read_ptb(filePath=None)
     vocab = d2l.Vocab(sentences, min_freq=10)
     subsampled, counter = subsample(sentences, vocab)
     corpus = [vocab[line] for line in subsampled]
-    all_centers, all_contexts = get_centers_and_contexts(
-        corpus, max_window_size)
+    all_centers, all_contexts = get_centers_and_contexts(corpus, max_window_size)
     all_negatives = get_negatives(
         all_contexts, vocab, counter, num_noise_words)
 
