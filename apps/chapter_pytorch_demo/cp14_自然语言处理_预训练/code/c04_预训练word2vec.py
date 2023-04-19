@@ -60,8 +60,7 @@ def train(net, data_iter, lr, num_epochs, device=d2l.try_gpu()):
             pred = skip_gram(center, context_negative, net[0], net[1])
             l = (loss(pred.reshape(label.shape).float(),
                       label.float(),
-                      mask) / mask.sum(axis=1) * mask.shape[1]
-                 )
+                      mask) / mask.sum(axis=1) * mask.shape[1])
 
             l.sum().backward()
             optimizer.step()

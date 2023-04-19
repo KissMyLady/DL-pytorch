@@ -215,11 +215,14 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
             ax.set_title(titles[i])
     return axes
 
+
 def get_dataloader_workers():
     """Use 4 processes to read the data.
-
-    Defined in :numref:`sec_fashion_mnist`"""
+    Defined in `sec_fashion_mnist`
+    
+    """
     return 4
+
 
 def load_data_fashion_mnist(batch_size, resize=None):
     """Download the Fashion-MNIST dataset and then load it into memory.
@@ -418,10 +421,12 @@ def download(name, cache_dir=os.path.join('..', 'data')):
         f.write(r.content)
     return fname
 
+
 def download_extract(name, folder=None):
     """Download and extract a zip/tar file.
-
-    Defined in :numref:`sec_kaggle_house`"""
+    Defined in `sec_kaggle_house`
+    
+    """
     fname = download(name)
     base_dir = os.path.dirname(fname)
     data_dir, ext = os.path.splitext(fname)
@@ -433,6 +438,7 @@ def download_extract(name, folder=None):
         assert False, 'Only zip/tar files can be extracted.'
     fp.extractall(base_dir)
     return os.path.join(base_dir, folder) if folder else data_dir
+
 
 def download_all():
     """Download all files in the DATA_HUB.
@@ -1394,10 +1400,14 @@ class AddNorm(nn.Module):
     def forward(self, X, Y):
         return self.ln(self.dropout(Y) + X)
 
+
 class EncoderBlock(nn.Module):
     """Transformer encoder block.
+    Defined in :numref:`sec_transformer`
 
-    Defined in :numref:`sec_transformer`"""
+    定 义: 10.7 Transformer
+    简 介: 包含两个子层, 多头注意力和基于位置的前馈网络, 这两个子层都使用了残差连接和紧随的层规范化
+    """
     def __init__(self, key_size, query_size, value_size, num_hiddens,
                  norm_shape, ffn_num_input, ffn_num_hiddens, num_heads,
                  dropout, use_bias=False, **kwargs):
@@ -1413,6 +1423,7 @@ class EncoderBlock(nn.Module):
     def forward(self, X, valid_lens):
         Y = self.addnorm1(X, self.attention(X, X, X, valid_lens))
         return self.addnorm2(Y, self.ffn(Y))
+
 
 class TransformerEncoder(d2l.Encoder):
     """Transformer encoder.
@@ -2119,6 +2130,7 @@ d2l.DATA_HUB['dog_tiny'] = (d2l.DATA_URL + 'kaggle_dog_tiny.zip',
 d2l.DATA_HUB['ptb'] = (d2l.DATA_URL + 'ptb.zip',
                        '319d85e578af0cdc590547f26231e4e31cdf1e42')
 
+
 def read_ptb(filePath=None):
     """Load the PTB dataset into a list of text lines.
 
@@ -2132,6 +2144,7 @@ def read_ptb(filePath=None):
         with open(os.path.join(data_dir, 'ptb.train.txt')) as f:
             raw_text = f.read()
     return [line.split() for line in raw_text.split('\n')]
+
 
 def subsample(sentences, vocab):
     """Subsample high-frequency words.
@@ -2227,19 +2240,32 @@ def batchify(data):
     return (d2l.reshape(d2l.tensor(centers), (-1, 1)), d2l.tensor(
         contexts_negatives), d2l.tensor(masks), d2l.tensor(labels))
 
+
 def load_data_ptb(batch_size, max_window_size, num_noise_words):
     """Download the PTB dataset and then load it into memory.
-
-    Defined in :numref:`subsec_word2vec-minibatch-loading`"""
+    Defined in :numref:`subsec_word2vec-minibatch-loading`
+    
+    来 源: 14.3 用于预训练词嵌入的数据集
+    作 用: 读取PTB数据集并返回数据迭代器和词表的load_data_pth函数
+    流 程: 读取数据, 经过下采样(删除高频词), 中心词和上下文提取, 负采样(得到噪声词) 处理, 返回批处理数据
+    参 数: 
+          batch_size 返回的数量大小
+          max_window_size: 中心词与上下文提取, 上下文的窗口大小.
+          num_noise_words: 负采样的采样倍数
+    """
     num_workers = d2l.get_dataloader_workers()
     filePath='/home/mylady/code/python/DL-pytorch/apps/chapter_pytorch_demo/data'
+    # 读取数据
     sentences = read_ptb(filePath=None)
+    # 词元化
     vocab = d2l.Vocab(sentences, min_freq=10)
+    # 下采样
     subsampled, counter = subsample(sentences, vocab)
     corpus = [vocab[line] for line in subsampled]
+    # 中心词-上下文
     all_centers, all_contexts = get_centers_and_contexts(corpus, max_window_size)
-    all_negatives = get_negatives(
-        all_contexts, vocab, counter, num_noise_words)
+    # 负采样
+    all_negatives = get_negatives(all_contexts, vocab, counter, num_noise_words)
 
     class PTBDataset(torch.utils.data.Dataset):
         def __init__(self, centers, contexts, negatives):
@@ -2256,11 +2282,13 @@ def load_data_ptb(batch_size, max_window_size, num_noise_words):
             return len(self.centers)
 
     dataset = PTBDataset(all_centers, all_contexts, all_negatives)
-
-    data_iter = torch.utils.data.DataLoader(dataset, batch_size, shuffle=True,
-                                      collate_fn=batchify,
-                                      num_workers=num_workers)
+    data_iter = torch.utils.data.DataLoader(dataset, 
+                                            batch_size, 
+                                            shuffle=True,
+                                            collate_fn=batchify,
+                                            num_workers=num_workers)
     return data_iter, vocab
+
 
 d2l.DATA_HUB['glove.6b.50d'] = (d2l.DATA_URL + 'glove.6B.50d.zip',
                                 '0b8703943ccdb6eb788e6f091b8946e82231bc4d')
@@ -2274,15 +2302,27 @@ d2l.DATA_HUB['glove.42b.300d'] = (d2l.DATA_URL + 'glove.42B.300d.zip',
 d2l.DATA_HUB['wiki.en'] = (d2l.DATA_URL + 'wiki.en.zip',
                            'c1816da3821ae9f43899be655002f6c723e91b88')
 
+
 class TokenEmbedding:
-    """Token Embedding."""
+    """Token Embedding.
+    章 节: 14.7 词的相似性和类比任务
+    作 用: 使用预先训练的词向量进行输出
+    使用方法:
+            glove_wikien =  TokenEmbedding('wiki.en')
+            glove_wikien.token_to_idx['beautiful']
+            glove_wikien.idx_to_token[3041]
+
+    遍历数据:
+            for x,y in zip(glove_wikien.idx_to_token, glove_wikien.token_to_idx.items()):
+                print(x, y)
+                break
+    """
+
     def __init__(self, embedding_name):
         """Defined in :numref:`sec_synonyms`"""
-        self.idx_to_token, self.idx_to_vec = self._load_embedding(
-            embedding_name)
         self.unknown_idx = 0
-        self.token_to_idx = {token: idx for idx, token in
-                             enumerate(self.idx_to_token)}
+        self.idx_to_token, self.idx_to_vec = self._load_embedding(embedding_name)
+        self.token_to_idx = {token: idx for idx, token in enumerate(self.idx_to_token)}
 
     def _load_embedding(self, embedding_name):
         idx_to_token, idx_to_vec = ['<unk>'], []
@@ -2309,21 +2349,35 @@ class TokenEmbedding:
     def __len__(self):
         return len(self.idx_to_token)
 
+
 def get_tokens_and_segments(tokens_a, tokens_b=None):
     """Get tokens of the BERT input sequence and their segment IDs.
+       获取BERT输入序列的词元及其段IDs。
+    Defined in :numref:`sec_bert`
 
-    Defined in :numref:`sec_bert`"""
+    定 义: 14.8 来自Transformers的双向编码器表示（BERT）
+    简 介: 获取输入序列的词元及其片段索引
+    作 用: 将一个句子或两个句子作为输入, 然后返回BERT输入序列的标记及其相应的片段索引
+
+    """
     tokens = ['<cls>'] + tokens_a + ['<sep>']
     # 0 and 1 are marking segment A and B, respectively
+    # 返回[0, 0, .., 1, 1, ..] 分别标记片段A和B
     segments = [0] * (len(tokens_a) + 2)
     if tokens_b is not None:
         tokens += tokens_b + ['<sep>']
         segments += [1] * (len(tokens_b) + 1)
     return tokens, segments
 
+
 class BERTEncoder(nn.Module):
     """BERT encoder.
-    Defined in :numref:`subsec_bert_input_rep`"""
+    Defined in `subsec_bert_input_rep`
+
+    名 称: BERT编码器
+    定 义: 14.8 来自Transformers的双向编码器表示（BERT）
+    简 介: 与TransformerEncoder不同, BERTEncoder使用片段嵌入和可学习的位置嵌入。
+    """
     def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,
                  ffn_num_hiddens, num_heads, num_layers, dropout,
                  max_len=1000, key_size=768, query_size=768, value_size=768,
@@ -2338,22 +2392,29 @@ class BERTEncoder(nn.Module):
                 ffn_num_input, ffn_num_hiddens, num_heads, dropout, True))
         # In BERT, positional embeddings are learnable, thus we create a
         # parameter of positional embeddings that are long enough
+        # 在BERT中, 位置嵌入是可学习的, 因此我们创建一个足够长的位置嵌入参数
         self.pos_embedding = nn.Parameter(torch.randn(1, max_len,
                                                       num_hiddens))
 
     def forward(self, tokens, segments, valid_lens):
         # Shape of `X` remains unchanged in the following code snippet:
         # (batch size, max sequence length, `num_hiddens`)
+        # 在以下代码中, X的形状保持不变:（批量大小，最大序列长度，num_hiddens）
         X = self.token_embedding(tokens) + self.segment_embedding(segments)
         X = X + self.pos_embedding.data[:, :X.shape[1], :]
         for blk in self.blks:
             X = blk(X, valid_lens)
         return X
 
+
 class MaskLM(nn.Module):
     """The masked language model task of BERT.
+    Defined in `subsec_bert_input_rep`
 
-    Defined in :numref:`subsec_bert_input_rep`"""
+    名 称: BERT的掩蔽语言模型任务
+    定 义: 14.8 来自Transformers的双向编码器表示（BERT）
+    描 述: 
+    """
     def __init__(self, vocab_size, num_hiddens, num_inputs=768, **kwargs):
         super(MaskLM, self).__init__(**kwargs)
         self.mlp = nn.Sequential(nn.Linear(num_inputs, num_hiddens),
@@ -2366,8 +2427,9 @@ class MaskLM(nn.Module):
         pred_positions = pred_positions.reshape(-1)
         batch_size = X.shape[0]
         batch_idx = torch.arange(0, batch_size)
-        # Suppose that `batch_size` = 2, `num_pred_positions` = 3, then
-        # `batch_idx` is `torch.tensor([0, 0, 0, 1, 1, 1])`
+        # Suppose that `batch_size` = 2, `num_pred_positions` = 3, then `batch_idx` is `torch.tensor([0, 0, 0, 1, 1, 1])`
+        # 假设batch_size=2，num_pred_positions=3
+        # 那么batch_idx是np.array（[0,0,0,1,1,1]）
         batch_idx = torch.repeat_interleave(batch_idx, num_pred_positions)
         masked_X = X[batch_idx, pred_positions]
         masked_X = masked_X.reshape((batch_size, num_pred_positions, -1))
@@ -2390,8 +2452,9 @@ class NextSentencePred(nn.Module):
 
 class BERTModel(nn.Module):
     """The BERT model.
-
-    Defined in :numref:`subsec_nsp`"""
+    Defined in :numref:`subsec_nsp`
+    定 义: 14.8 来自Transformers的双向编码器表示
+    """
     def __init__(self, vocab_size, num_hiddens, norm_shape, 
                  ffn_num_input, ffn_num_hiddens, 
                  num_heads, num_layers, 
@@ -2432,12 +2495,19 @@ class BERTModel(nn.Module):
         nsp_Y_hat = self.nsp(self.hidden(encoded_X[:, 0, :]))
         return encoded_X, mlm_Y_hat, nsp_Y_hat
 
+
 d2l.DATA_HUB['wikitext-2'] = (
     'https://s3.amazonaws.com/research.metamind.io/wikitext/'
     'wikitext-2-v1.zip', '3c914d17d80b1459be871a5039ac23e752a53cbe')
 
+
 def _read_wiki(data_dir):
-    """Defined in :numref:`sec_bert-dataset`"""
+    """Defined in `sec_bert-dataset`
+
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: 加载数据集
+    构 造:  
+    """
     file_name = os.path.join(data_dir, 'wiki.train.tokens')
     with open(file_name, 'r') as f:
         lines = f.readlines()
@@ -2447,8 +2517,14 @@ def _read_wiki(data_dir):
     random.shuffle(paragraphs)
     return paragraphs
 
+
+# 生成二分类任务的训练样本
 def _get_next_sentence(sentence, next_sentence, paragraphs):
-    """Defined in :numref:`sec_bert-dataset`"""
+    """Defined in `sec_bert-dataset`
+    
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: 生成二分类任务的训练样本
+    """
     if random.random() < 0.5:
         is_next = True
     else:
@@ -2457,8 +2533,14 @@ def _get_next_sentence(sentence, next_sentence, paragraphs):
         is_next = False
     return sentence, next_sentence, is_next
 
+
 def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
-    """Defined in :numref:`sec_bert-dataset`"""
+    """Defined in `sec_bert-dataset`
+
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: 从输入 paragraph 生成用于下一句预测的训练样本
+    构 造: 这里 paragraph 是句子列表，其中每个句子都是词元列表。自变量 max_len 指定预训练期间的BERT输入序列的最大长度。
+    """
     nsp_data_from_paragraph = []
     for i in range(len(paragraph) - 1):
         tokens_a, tokens_b, is_next = _get_next_sentence(
@@ -2470,9 +2552,18 @@ def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
         nsp_data_from_paragraph.append((tokens, segments, is_next))
     return nsp_data_from_paragraph
 
-def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
-                        vocab):
-    """Defined in :numref:`sec_bert-dataset`"""
+
+def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds, vocab):
+    """Defined in `sec_bert-dataset`
+    
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: 从输入 paragraph 生成用于下一句预测的训练样本
+    构 造: 为了从BERT输入序列生成遮蔽语言模型的训练样本，我们定义了以下 _replace_mlm_tokens 函数。
+           的BERT输入序列的词元索引的列表（特殊词元在遮蔽语言模型任务中不被预测），以及 num_mlm_preds
+           指示预测的数量（选择15%要预测的随机词元）。在 subsec_mlm中定义遮蔽语言模型任务之后，
+           在每个预测位置，输入可以由特殊的“掩码”词元或随机词元替换，或者保持不变。最后，该函数返回可能
+           替换后的输入词元、发生预测的词元索引和这些预测的标签。 
+    """
     # Make a new copy of tokens for the input of a masked language model,
     # where the input may contain replaced '<mask>' or random tokens
     mlm_input_tokens = [token for token in tokens]
@@ -2499,80 +2590,104 @@ def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
             (mlm_pred_position, tokens[mlm_pred_position]))
     return mlm_input_tokens, pred_positions_and_labels
 
+
 def _get_mlm_data_from_tokens(tokens, vocab):
-    """Defined in :numref:`subsec_prepare_mlm_data`"""
+    """Defined in `subsec_prepare_mlm_data`
+    
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: None
+    构 造: 函数将BERT输入序列（tokens）作为输入，并返回输入词元的索引（在subsec_mlm中描述
+          的可能的词元替换之后）、发生预测的词元索引以及这些预测的标签索引。
+    """
     candidate_pred_positions = []
     # `tokens` is a list of strings
+    # tokens是一个字符串列表
     for i, token in enumerate(tokens):
         # Special tokens are not predicted in the masked language modeling
         # task
+        # 在遮蔽语言模型任务中不会预测特殊词元
         if token in ['<cls>', '<sep>']:
             continue
         candidate_pred_positions.append(i)
     # 15% of random tokens are predicted in the masked language modeling task
+    # 遮蔽语言模型任务中预测15%的随机词元
     num_mlm_preds = max(1, round(len(tokens) * 0.15))
-    mlm_input_tokens, pred_positions_and_labels = _replace_mlm_tokens(
-        tokens, candidate_pred_positions, num_mlm_preds, vocab)
-    pred_positions_and_labels = sorted(pred_positions_and_labels,
-                                       key=lambda x: x[0])
+    mlm_input_tokens, pred_positions_and_labels = _replace_mlm_tokens(tokens, 
+                                                                      candidate_pred_positions, 
+                                                                      num_mlm_preds, 
+                                                                      vocab)
+    pred_positions_and_labels = sorted(pred_positions_and_labels, key=lambda x: x[0])
     pred_positions = [v[0] for v in pred_positions_and_labels]
     mlm_pred_labels = [v[1] for v in pred_positions_and_labels]
     return vocab[mlm_input_tokens], pred_positions, vocab[mlm_pred_labels]
 
+
 def _pad_bert_inputs(examples, max_len, vocab):
-    """Defined in :numref:`subsec_prepare_mlm_data`"""
+    """Defined in `subsec_prepare_mlm_data`
+    
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: 将文本转换为预训练数据集
+    构 造: 定义辅助函数 _pad_bert_inputs 来将特殊的“<mask>”词元附加到输入。它的参数 examples 包含
+           来自两个预训练任务的辅助函数 _get_nsp_data_from_paragraph 和 _get_mlm_data_from_tokens 的输出。
+
+    """
     max_num_mlm_preds = round(max_len * 0.15)
     all_token_ids, all_segments, valid_lens,  = [], [], []
     all_pred_positions, all_mlm_weights, all_mlm_labels = [], [], []
     nsp_labels = []
-    for (token_ids, pred_positions, mlm_pred_label_ids, segments,
-         is_next) in examples:
-        all_token_ids.append(torch.tensor(token_ids + [vocab['<pad>']] * (
-            max_len - len(token_ids)), dtype=torch.long))
-        all_segments.append(torch.tensor(segments + [0] * (
-            max_len - len(segments)), dtype=torch.long))
+
+    for (token_ids, pred_positions, mlm_pred_label_ids, segments, is_next) in examples:
+        all_token_ids.append(torch.tensor(token_ids + [vocab['<pad>']] * (max_len - len(token_ids)), dtype=torch.long))
+        all_segments.append(torch.tensor(segments + [0] * (max_len - len(segments)), dtype=torch.long))
         # `valid_lens` excludes count of '<pad>' tokens
         valid_lens.append(torch.tensor(len(token_ids), dtype=torch.float32))
-        all_pred_positions.append(torch.tensor(pred_positions + [0] * (
-            max_num_mlm_preds - len(pred_positions)), dtype=torch.long))
+        all_pred_positions.append(torch.tensor(pred_positions + [0] * (max_num_mlm_preds - len(pred_positions)), dtype=torch.long))
         # Predictions of padded tokens will be filtered out in the loss via
         # multiplication of 0 weights
-        all_mlm_weights.append(
-            torch.tensor([1.0] * len(mlm_pred_label_ids) + [0.0] * (
-                max_num_mlm_preds - len(pred_positions)),
-                dtype=torch.float32))
-        all_mlm_labels.append(torch.tensor(mlm_pred_label_ids + [0] * (
-            max_num_mlm_preds - len(mlm_pred_label_ids)), dtype=torch.long))
+        all_mlm_weights.append(torch.tensor([1.0] * len(mlm_pred_label_ids) + [0.0] * (max_num_mlm_preds - len(pred_positions)),
+                               dtype=torch.float32))
+        all_mlm_labels.append(torch.tensor(mlm_pred_label_ids + [0] * (max_num_mlm_preds - len(mlm_pred_label_ids)), 
+                               dtype=torch.long))
         nsp_labels.append(torch.tensor(is_next, dtype=torch.long))
+
     return (all_token_ids, all_segments, valid_lens, all_pred_positions,
             all_mlm_weights, all_mlm_labels, nsp_labels)
 
+
 class _WikiTextDataset(torch.utils.data.Dataset):
-    """Defined in :numref:`subsec_prepare_mlm_data`"""
+    """Defined in `subsec_prepare_mlm_data`
+    
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: 
+    构 造: _WikiTextDataset 类为用于预训练BERT的 WikiText-2 数据集。通过实现 __getitem__ 函数，
+          我们可以任意访问 WikiText-2 语料库的一对句子生成的预训练样本（遮蔽语言模型和下一句预测）样本。
+    """
     def __init__(self, paragraphs, max_len):
         # Input `paragraphs[i]` is a list of sentence strings representing a
         # paragraph; while output `paragraphs[i]` is a list of sentences
         # representing a paragraph, where each sentence is a list of tokens
-        paragraphs = [d2l.tokenize(
-            paragraph, token='word') for paragraph in paragraphs]
-        sentences = [sentence for paragraph in paragraphs
-                     for sentence in paragraph]
-        self.vocab = d2l.Vocab(sentences, min_freq=5, reserved_tokens=[
-            '<pad>', '<mask>', '<cls>', '<sep>'])
+        # 输入paragraphs[i]是代表段落的句子字符串列表；
+        # 而输出paragraphs[i]是代表段落的句子列表，其中每个句子都是词元列表
+        paragraphs = [d2l.tokenize(paragraph, token='word') for paragraph in paragraphs]
+        sentences = [sentence for paragraph in paragraphs for sentence in paragraph]
+        self.vocab = d2l.Vocab(sentences, min_freq=5, reserved_tokens=['<pad>', '<mask>', '<cls>', '<sep>'])
         # Get data for the next sentence prediction task
         examples = []
         for paragraph in paragraphs:
-            examples.extend(_get_nsp_data_from_paragraph(
-                paragraph, paragraphs, self.vocab, max_len))
+            examples.extend(_get_nsp_data_from_paragraph(paragraph, 
+                                                         paragraphs, 
+                                                         self.vocab,
+                                                         max_len))
         # Get data for the masked language model task
+        # 获取遮蔽语言模型任务的数据
         examples = [(_get_mlm_data_from_tokens(tokens, self.vocab)
                       + (segments, is_next))
                      for tokens, segments, is_next in examples]
         # Pad inputs
+        # 填充输入
         (self.all_token_ids, self.all_segments, self.valid_lens,
          self.all_pred_positions, self.all_mlm_weights,
-         self.all_mlm_labels, self.nsp_labels) = _pad_bert_inputs(
-            examples, max_len, self.vocab)
+         self.all_mlm_labels, self.nsp_labels) = _pad_bert_inputs(examples, max_len, self.vocab)
 
     def __getitem__(self, idx):
         return (self.all_token_ids[idx], self.all_segments[idx],
@@ -2583,17 +2698,26 @@ class _WikiTextDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.all_token_ids)
 
+
 def load_data_wiki(batch_size, max_len):
     """Load the WikiText-2 dataset.
+    Defined in `subsec_prepare_mlm_data`
 
-    Defined in :numref:`subsec_prepare_mlm_data`"""
-    num_workers = d2l.get_dataloader_workers()
+    定 义: 14.9 用于预训练BERT的数据集
+    描 述: 加载 WikiText-2 数据集
+    构 造: 通过使用 _read_wiki 函数和 _WikiTextDataset 类，我们定义了下面的 load_data_wiki 来下载并生成 WikiText-2 数据集，并从中生成预训练样本。
+
+    """
+    num_workers = d2l.get_dataloader_workers()  # 4
     data_dir = d2l.download_extract('wikitext-2', 'wikitext-2')
     paragraphs = _read_wiki(data_dir)
     train_set = _WikiTextDataset(paragraphs, max_len)
-    train_iter = torch.utils.data.DataLoader(train_set, batch_size,
-                                        shuffle=True, num_workers=num_workers)
+    train_iter = torch.utils.data.DataLoader(train_set, 
+                                             batch_size,
+                                             shuffle=True, 
+                                             num_workers=num_workers)
     return train_iter, train_set.vocab
+
 
 def _get_batch_loss_bert(net, loss, vocab_size, tokens_X,
                          segments_X, valid_lens_x,
