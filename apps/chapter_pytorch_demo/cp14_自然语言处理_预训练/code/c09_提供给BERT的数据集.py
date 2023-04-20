@@ -12,7 +12,7 @@ sys.path.append("../..")
 import d2lzh_pytorch.torch as d2l
 
 
-# 0, 读取文本数据
+# 0, 读取文本数据 13M
 def _read_wiki(data_dir):
     file_name = os.path.join(data_dir, 'wiki.train.tokens')
     with open(file_name, 'r', encoding='utf-8') as f:
@@ -39,8 +39,9 @@ def _get_next_sentence(sentence, next_sentence, paragraphs):
 def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
     nsp_data_from_paragraph = []
     for i in range(len(paragraph) - 1):
-        tokens_a, tokens_b, is_next = _get_next_sentence(
-            paragraph[i], paragraph[i + 1], paragraphs)
+        tokens_a, tokens_b, is_next = _get_next_sentence(paragraph[i],
+                                                         paragraph[i + 1],
+                                                         paragraphs)
         # 考虑1个'<cls>'词元和2个'<sep>'词元
         if len(tokens_a) + len(tokens_b) + 3 > max_len:
             continue
@@ -56,6 +57,7 @@ def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds, vocab):
     pred_positions_and_labels = []
     # 打乱后用于在遮蔽语言模型任务中获取15%的随机词元进行预测
     random.shuffle(candidate_pred_positions)
+
     for mlm_pred_position in candidate_pred_positions:
         if len(pred_positions_and_labels) >= num_mlm_preds:
             break
@@ -70,8 +72,10 @@ def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds, vocab):
             # 10%的时间：用随机词替换该词
             else:
                 masked_token = random.choice(vocab.idx_to_token)
+
         mlm_input_tokens[mlm_pred_position] = masked_token
         pred_positions_and_labels.append((mlm_pred_position, tokens[mlm_pred_position]))
+
     return mlm_input_tokens, pred_positions_and_labels
 
 

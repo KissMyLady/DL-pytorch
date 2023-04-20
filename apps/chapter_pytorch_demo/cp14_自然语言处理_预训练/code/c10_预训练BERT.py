@@ -6,9 +6,9 @@ from torch import nn
 # from d2l import torch as d2l
 
 import sys
+
 sys.path.append("../..")
 import d2lzh_pytorch.torch as d2l
-
 
 
 def _get_batch_loss_bert(net, loss, vocab_size, tokens_X,
@@ -38,7 +38,9 @@ def _get_batch_loss_bert(net, loss, vocab_size, tokens_X,
 def train_bert(train_iter, net, loss, vocab_size, devices, num_steps):
     net = nn.DataParallel(net, device_ids=devices).to(devices[0])
     trainer = torch.optim.Adam(net.parameters(), lr=0.01)
-    step, timer = 0, d2l.Timer()
+    step = 0
+    timer = d2l.Timer()
+
     animator = d2l.Animator(xlabel='step',
                             ylabel='loss',
                             xlim=[1, num_steps],
@@ -47,16 +49,18 @@ def train_bert(train_iter, net, loss, vocab_size, devices, num_steps):
     metric = d2l.Accumulator(4)
     num_steps_reached = False
 
-    timer = d2l.Timer()
     while step < num_steps and not num_steps_reached:
 
-        for tokens_X, segments_X, valid_lens_x, pred_positions_X, mlm_weights_X, mlm_Y, nsp_y in train_iter:
+        for tokens_X, segments_X, valid_lens_x, \
+            pred_positions_X, mlm_weights_X, mlm_Y, nsp_y in train_iter:
+            # 复制到GPU
             tokens_X = tokens_X.to(devices[0])
             segments_X = segments_X.to(devices[0])
             valid_lens_x = valid_lens_x.to(devices[0])
             pred_positions_X = pred_positions_X.to(devices[0])
             mlm_weights_X = mlm_weights_X.to(devices[0])
             mlm_Y, nsp_y = mlm_Y.to(devices[0]), nsp_y.to(devices[0])
+
             trainer.zero_grad()
             timer.start()
 
@@ -120,7 +124,7 @@ devices = d2l.try_all_gpus()
 loss = nn.CrossEntropyLoss()
 
 
-def run():
+def run_train():
     num_steps = 50
     # 训练
     train_bert(train_iter,
@@ -157,8 +161,8 @@ def test_1():
 
 
 def main():
-    run()
-    test_1()
+    run_train()
+    # test_1()
     pass
 
 
