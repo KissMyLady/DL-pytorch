@@ -152,8 +152,13 @@ class Timer:
 
 def synthetic_data(w, b, num_examples):
     """Generate y = Xw + b + noise.
+    Defined in `sec_linear_scratch`
+    
+    定 义: 章节3.2 线性神经网络从零开始
+    功 能: 生成y=Xw+b+噪声
 
-    Defined in :numref:`sec_linear_scratch`"""
+
+    """
     X = d2l.normal(0, 1, (num_examples, len(w)))
     y = d2l.matmul(X, w) + b
     y += d2l.normal(0, 0.01, y.shape)
@@ -224,32 +229,27 @@ def get_dataloader_workers():
     return 4
 
 
-def load_data_fashion_mnist(batch_size, resize=None):
+def load_data_fashion_mnist(batch_size, resize=None, root='~/Datasets/FashionMNIST'):
     """Download the Fashion-MNIST dataset and then load it into memory.
-
-    Defined in :numref:`sec_fashion_mnist`"""
+    Defined in `sec_fashion_mnist`
+    """
     trans = [transforms.ToTensor()]
     if resize:
         trans.insert(0, transforms.Resize(resize))
-
     trans = transforms.Compose(trans)
-
-    # dataSetRoot = "../data"
-    dataSetRoot = '/home/mylady/Datasets/FashionMNIST'
-    mnist_train = torchvision.datasets.FashionMNIST(root=dataSetRoot, 
+    mnist_train = torchvision.datasets.FashionMNIST(root=root, 
                                                     train=True, 
                                                     transform=trans, 
-                                                    download=True)
-
-    mnist_test = torchvision.datasets.FashionMNIST(root=dataSetRoot, 
+                                                    download=False)
+    mnist_test = torchvision.datasets.FashionMNIST(root=root,
                                                     train=False,
                                                     transform=trans, 
-                                                    download=True)
-
+                                                    download=False)
     return (data.DataLoader(mnist_train, batch_size, shuffle=True,
                             num_workers=get_dataloader_workers()),
             data.DataLoader(mnist_test, batch_size, shuffle=False,
                             num_workers=get_dataloader_workers()))
+
 
 def accuracy(y_hat, y):
     """Compute the number of correct predictions.
@@ -273,10 +273,11 @@ def evaluate_accuracy(net, data_iter):
             metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 
+
 class Accumulator:
     """For accumulating sums over `n` variables."""
     def __init__(self, n):
-        """Defined in :numref:`sec_softmax_scratch`"""
+        """Defined in `sec_softmax_scratch`"""
         self.data = [0.0] * n
 
     def add(self, *args):
@@ -287,6 +288,7 @@ class Accumulator:
 
     def __getitem__(self, idx):
         return self.data[idx]
+
 
 def train_epoch_ch3(net, train_iter, loss, updater):
     """The training loop defined in Chapter 3.
@@ -355,20 +357,29 @@ class Animator:
         display.display(self.fig)
         display.clear_output(wait=True)
 
+
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     """Train a model (defined in Chapter 3).
+    Defined in `sec_softmax_scratch`
+    
+    章 节: 3. 线性神经网络
 
-    Defined in :numref:`sec_softmax_scratch`"""
-    animator = Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0.3, 0.9],
+    """
+    animator = Animator(xlabel='epoch', 
+                        xlim=[1, num_epochs], 
+                        ylim=[0.3, 0.9],
                         legend=['train loss', 'train acc', 'test acc'])
+
     for epoch in range(num_epochs):
         train_metrics = train_epoch_ch3(net, train_iter, loss, updater)
         test_acc = evaluate_accuracy(net, test_iter)
         animator.add(epoch + 1, train_metrics + (test_acc,))
+
     train_loss, train_acc = train_metrics
     assert train_loss < 0.5, train_loss
     assert train_acc <= 1 and train_acc > 0.7, train_acc
     assert test_acc <= 1 and test_acc > 0.7, test_acc
+
 
 def predict_ch3(net, test_iter, n=6):
     """Predict labels (defined in Chapter 3).
@@ -1627,13 +1638,19 @@ def train_batch_ch13(net, X, y, loss, trainer, devices):
     train_acc_sum = d2l.accuracy(pred, y)
     return train_loss_sum, train_acc_sum
 
+
 def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
                devices=d2l.try_all_gpus()):
     """Train a model with mutiple GPUs (defined in Chapter 13).
+    Defined in :numref:`sec_image_augmentation`
+    
+    使 用: 在 15 章节
 
-    Defined in :numref:`sec_image_augmentation`"""
+    """
     timer, num_batches = d2l.Timer(), len(train_iter)
-    animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0, 1],
+    animator = d2l.Animator(xlabel='epoch', 
+                            xlim=[1, num_epochs], 
+                            ylim=[0, 1], 
                             legend=['train loss', 'train acc', 'test acc'])
     net = nn.DataParallel(net, device_ids=devices).to(devices[0])
     for epoch in range(num_epochs):
@@ -1642,8 +1659,12 @@ def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
         metric = d2l.Accumulator(4)
         for i, (features, labels) in enumerate(train_iter):
             timer.start()
-            l, acc = train_batch_ch13(
-                net, features, labels, loss, trainer, devices)
+            l, acc = train_batch_ch13(net, 
+                                      features, 
+                                      labels, 
+                                      loss, 
+                                      trainer, 
+                                      devices)
             metric.add(l, acc, labels.shape[0], labels.numel())
             timer.stop()
             if (i + 1) % (num_batches // 5) == 0 or i == num_batches - 1:
@@ -1652,10 +1673,13 @@ def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
                               None))
         test_acc = d2l.evaluate_accuracy_gpu(net, test_iter)
         animator.add(epoch + 1, (None, None, test_acc))
+
+    print('time consuming: %.4f' % timer.sum())
     print(f'loss {metric[0] / metric[2]:.3f}, train acc '
           f'{metric[1] / metric[3]:.3f}, test acc {test_acc:.3f}')
     print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec on '
           f'{str(devices)}')
+
 
 d2l.DATA_HUB['hotdog'] = (d2l.DATA_URL + 'hotdog.zip',
                          'fba480ffa8aa7e0febbb511d181409f899b9baa5')
@@ -2741,49 +2765,65 @@ d2l.DATA_HUB['aclImdb'] = (
     'http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz',
     '01ada507287d82875905620988597833ad4e0903')
 
+
 def read_imdb(data_dir, is_train):
     """Read the IMDb review dataset text sequences and labels.
+    Defined in `sec_sentiment`
+    
+    章 节: 15.1 情感分析及数据集
+    作 用: 返回 训练-测试集列表
+    使 用:
+          train_data = read_imdb(data_dir, is_train=False)
+          print('测试集数目：', len(train_data[0]))
 
-    Defined in :numref:`sec_sentiment`"""
+          for x, y in zip(train_data[0][:3], train_data[1][:3]):
+              print('标签：', y, 'review:', x[0:60])
+    """
     data, labels = [], []
     for label in ('pos', 'neg'):
-        folder_name = os.path.join(data_dir, 'train' if is_train else 'test',
-                                   label)
+        folder_name = os.path.join(data_dir, 'train' if is_train else 'test', label)
         for file in os.listdir(folder_name):
             with open(os.path.join(folder_name, file), 'rb') as f:
                 review = f.read().decode('utf-8').replace('\n', '')
                 data.append(review)
                 labels.append(1 if label == 'pos' else 0)
+
     return data, labels
+
 
 def load_data_imdb(batch_size, num_steps=500):
     """Return data iterators and the vocabulary of the IMDb review dataset.
+    Defined in `sec_sentiment`
+    
+    定 义: 15.1 情感分析及数据集
+    功 能: 返回数据迭代器和IMDb评论数据集的词表
 
-    Defined in :numref:`sec_sentiment`"""
+    """
     data_dir = d2l.download_extract('aclImdb', 'aclImdb')
     train_data = read_imdb(data_dir, True)
     test_data = read_imdb(data_dir, False)
     train_tokens = d2l.tokenize(train_data[0], token='word')
     test_tokens = d2l.tokenize(test_data[0], token='word')
     vocab = d2l.Vocab(train_tokens, min_freq=5)
-    train_features = torch.tensor([d2l.truncate_pad(
-        vocab[line], num_steps, vocab['<pad>']) for line in train_tokens])
-    test_features = torch.tensor([d2l.truncate_pad(
-        vocab[line], num_steps, vocab['<pad>']) for line in test_tokens])
-    train_iter = d2l.load_array((train_features, torch.tensor(train_data[1])),
-                                batch_size)
-    test_iter = d2l.load_array((test_features, torch.tensor(test_data[1])),
-                               batch_size,
+    train_features = torch.tensor([d2l.truncate_pad(vocab[line], num_steps, vocab['<pad>']) for line in train_tokens])
+    test_features = torch.tensor([d2l.truncate_pad(vocab[line], num_steps, vocab['<pad>']) for line in test_tokens])
+
+    # 数据迭代器
+    train_iter = d2l.load_array((train_features, torch.tensor(train_data[1])), batch_size)
+    test_iter = d2l.load_array((test_features, torch.tensor(test_data[1])), batch_size,
                                is_train=False)
     return train_iter, test_iter, vocab
 
+
 def predict_sentiment(net, vocab, sequence):
     """Predict the sentiment of a text sequence.
-
-    Defined in :numref:`sec_sentiment_rnn`"""
+    Defined in `sec_sentiment_rnn`
+    
+    """
     sequence = torch.tensor(vocab[sequence.split()], device=d2l.try_gpu())
     label = torch.argmax(net(sequence.reshape(1, -1)), dim=1)
     return 'positive' if label == 1 else 'negative'
+
 
 d2l.DATA_HUB['SNLI'] = (
     'https://nlp.stanford.edu/projects/snli/snli_1.0.zip',
@@ -2839,10 +2879,15 @@ class SNLIDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.premises)
 
+
 def load_data_snli(batch_size, num_steps=50):
     """Download the SNLI dataset and return data iterators and vocabulary.
+    Defined in `sec_natural-language-inference-and-dataset`
+    
+    章 节: 15.4 自然语言推断与数据集
+    功 能: 下载SNLI数据集并返回数据迭代器和词表
 
-    Defined in :numref:`sec_natural-language-inference-and-dataset`"""
+    """
     num_workers = d2l.get_dataloader_workers()
     data_dir = d2l.download_extract('SNLI')
     train_data = read_snli(data_dir, True)
@@ -2857,6 +2902,7 @@ def load_data_snli(batch_size, num_steps=50):
                                             num_workers=num_workers)
     return train_iter, test_iter, train_set.vocab
 
+
 def predict_snli(net, vocab, premise, hypothesis):
     """Predict the logical relationship between the premise and hypothesis.
 
@@ -2868,6 +2914,7 @@ def predict_snli(net, vocab, premise, hypothesis):
                            hypothesis.reshape((1, -1))]), dim=1)
     return 'entailment' if label == 0 else 'contradiction' if label == 1 \
             else 'neutral'
+
 
 def update_D(X, Z, net_D, net_G, loss, trainer_D):
     """Update discriminator.

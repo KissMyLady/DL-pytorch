@@ -24,6 +24,11 @@ import numpy as np
 from decimal import Decimal
 
 
+# __name__ 打印结果
+#   d2lzh_pytorch.utils
+# d2l = sys.modules[__name__] 打印:
+#   <module 'd2lzh_pytorch.utils' from '/home/mylady/code/python/DL-pytorch/apps/chapter_pytorch_demo/cp03_线性模型/../d2lzh_pytorch/utils.py'>
+
 VOC_CLASSES = ['background', 'aeroplane', 'bicycle', 'bird', 'boat',
                'bottle', 'bus', 'car', 'cat', 'chair', 'cow',
                'diningtable', 'dog', 'horse', 'motorbike', 'person',
@@ -246,46 +251,38 @@ def train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epo
 
 # ########################## 5.6 #########################3
 def load_data_fashion_mnist(batch_size, resize=None, root='~/Datasets/FashionMNIST'):
-    """Download the fashion mnist dataset and then load into memory."""
+    """Download the fashion mnist dataset and then load into memory.
+
+    使 用: 章节3, 线性回归
+    
+    """
     trans = []
     if resize:
         trans.append(torchvision.transforms.Resize(size=resize))
         pass
-
     trans.append(torchvision.transforms.ToTensor())
     transform = torchvision.transforms.Compose(trans)
-
-    mnist_train = torchvision.datasets.FashionMNIST(
-        root=root,
-        train=True,
-        download=True,
-        transform=transform
-    )
-    mnist_test = torchvision.datasets.FashionMNIST(
-        root=root,
-        train=False,
-        download=True,
-        transform=transform
-    )
-
+    mnist_train = torchvision.datasets.FashionMNIST(root=root,
+                                                    train=True,
+                                                    download=False,
+                                                    transform=transform)
+    mnist_test = torchvision.datasets.FashionMNIST(root=root,
+                                                   train=False,
+                                                   download=False,
+                                                   transform=transform)
     if sys.platform.startswith('win'):
         num_workers = 0  # 0表示不用额外的进程来加速读取数据
     else:
         num_workers = 4
-
-    train_iter = torch.utils.data.DataLoader(
-        mnist_train,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=num_workers
-    )
-
-    test_iter = torch.utils.data.DataLoader(
-        mnist_test,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers
-    )
+    train_iter = torch.utils.data.DataLoader(mnist_train,
+                                             batch_size=batch_size,
+                                             shuffle=True,
+                                             num_workers=num_workers
+                                             )
+    test_iter = torch.utils.data.DataLoader(mnist_test,
+                                            batch_size=batch_size,
+                                            shuffle=False,
+                                            num_workers=num_workers)
     return train_iter, test_iter
 
 
