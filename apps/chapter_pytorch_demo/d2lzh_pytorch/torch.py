@@ -624,11 +624,42 @@ d2l.DATA_HUB['time_machine'] = (d2l.DATA_URL + 'timemachine.txt',
 
 def read_time_machine():
     """Load the time machine dataset into a list of text lines.
+    Defined in `sec_text_preprocessing`
+    
+    定 义: 8.2 文本预处理
+    功 能: 将时间机器数据集加载到文本行的列表中
 
-    Defined in :numref:`sec_text_preprocessing`"""
+    """
     with open(d2l.download('time_machine'), 'r') as f:
         lines = f.readlines()
-    return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
+    res = [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
+    return res
+
+
+# 加载汉字小说
+def read_time_machine_v2(filePath="/mnt/g2t/ai_data/NLP_data/贾平凹-山本.txt",
+                        stopwords_file='/mnt/g2t/ai_data/NLP_data/stopwords.txt'): 
+    """
+    定 义: 8.2 文本预处理
+    描述: 自定义汉字文本加载, 将时间机器数据集加载到文本行的列表中
+
+    """
+    # 加载文本数据
+    with open(filePath, 'r', encoding='utf8') as f:
+        lines = f.readlines()
+    
+    # 加载停用词表
+    with open(stopwords_file, "r") as words:
+        stopwords = [i.strip() for i in words]
+
+    import jieba
+    stopwords.extend(['n', '.','（','）','-','——','(',')',' ','，'])
+    textList = jieba.lcut(str(lines))
+    # q_cut_str = " ".join(textList)
+    
+    q_cut_list = [i for i in textList if i not in stopwords] # 去除停用词
+    return q_cut_list
+
 
 def tokenize(lines, token='word'):
     """Split text lines into word or character tokens.
@@ -719,8 +750,12 @@ def count_corpus(tokens):
 
 def load_corpus_time_machine(max_tokens=-1):
     """Return token indices and the vocabulary of the time machine dataset.
+    Defined in `sec_text_preprocessing`
+    
+    定 义: 8.2 文本预处理
+    功能: 返回时光机器数据集的词元索引列表和词表
 
-    Defined in :numref:`sec_text_preprocessing`"""
+    """
     lines = read_time_machine()
     tokens = tokenize(lines, 'char')
     vocab = Vocab(tokens)
@@ -731,10 +766,11 @@ def load_corpus_time_machine(max_tokens=-1):
         corpus = corpus[:max_tokens]
     return corpus, vocab
 
+
 def seq_data_iter_random(corpus, batch_size, num_steps):
     """Generate a minibatch of subsequences using random sampling.
-
-    Defined in :numref:`sec_language_model`"""
+    Defined in `sec_language_model`
+    """
     # Start with a random offset (inclusive of `num_steps - 1`) to partition a
     # sequence
     corpus = corpus[random.randint(0, num_steps - 1):]
@@ -760,6 +796,7 @@ def seq_data_iter_random(corpus, batch_size, num_steps):
         Y = [data(j + 1) for j in initial_indices_per_batch]
         yield d2l.tensor(X), d2l.tensor(Y)
 
+
 def seq_data_iter_sequential(corpus, batch_size, num_steps):
     """Generate a minibatch of subsequences using sequential partitioning.
 
@@ -776,10 +813,11 @@ def seq_data_iter_sequential(corpus, batch_size, num_steps):
         Y = Ys[:, i: i + num_steps]
         yield X, Y
 
+
 class SeqDataLoader:
     """An iterator to load sequence data."""
     def __init__(self, batch_size, num_steps, use_random_iter, max_tokens):
-        """Defined in :numref:`sec_language_model`"""
+        """Defined in `sec_language_model`"""
         if use_random_iter:
             self.data_iter_fn = d2l.seq_data_iter_random
         else:
@@ -790,14 +828,20 @@ class SeqDataLoader:
     def __iter__(self):
         return self.data_iter_fn(self.corpus, self.batch_size, self.num_steps)
 
+
 def load_data_time_machine(batch_size, num_steps,
                            use_random_iter=False, max_tokens=10000):
     """Return the iterator and the vocabulary of the time machine dataset.
+    Defined in `sec_language_model`
 
-    Defined in :numref:`sec_language_model`"""
+    定 义: 8.3 语言模型和数据集
+    功 能: 返回时光机器数据集的迭代器和词表
+
+    """
     data_iter = SeqDataLoader(
         batch_size, num_steps, use_random_iter, max_tokens)
     return data_iter, data_iter.vocab
+
 
 class RNNModelScratch:
     """A RNN Model implemented from scratch."""
@@ -881,6 +925,7 @@ def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
         metric.add(l * d2l.size(y), d2l.size(y))
     return math.exp(metric[0] / metric[1]), metric[1] / timer.stop()
 
+
 def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
               use_random_iter=False):
     """Train a model (defined in Chapter 8).
@@ -909,10 +954,14 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
     print(predict('time traveller'))
     print(predict('traveller'))
 
+
 class RNNModel(nn.Module):
     """The RNN model.
-
-    Defined in :numref:`sec_rnn-concise`"""
+    Defined in `sec_rnn-concise`
+    
+    定 义: 8.6 RNN 简洁实现
+    功 能: 模块的封装. rnn_layer 为传入的 nn.RNN(len_vocab, num_hiddens) 这种RNN网络
+    """
     def __init__(self, rnn_layer, vocab_size, **kwargs):
         super(RNNModel, self).__init__(**kwargs)
         self.rnn = rnn_layer
@@ -951,6 +1000,7 @@ class RNNModel(nn.Module):
                     torch.zeros((
                         self.num_directions * self.rnn.num_layers,
                         batch_size, self.num_hiddens), device=device))
+
 
 d2l.DATA_HUB['fra-eng'] = (d2l.DATA_URL + 'fra-eng.zip',
                            '94646ad1522d915e7b0f9296181140edcf86a4f5')
