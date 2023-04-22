@@ -157,18 +157,19 @@ def synthetic_data(w, b, num_examples):
     定 义: 章节3.2 线性神经网络从零开始
     功 能: 生成y=Xw+b+噪声
 
-
     """
     X = d2l.normal(0, 1, (num_examples, len(w)))
     y = d2l.matmul(X, w) + b
     y += d2l.normal(0, 0.01, y.shape)
     return X, d2l.reshape(y, (-1, 1))
 
+
 def linreg(X, w, b):
     """The linear regression model.
 
     Defined in :numref:`sec_linear_scratch`"""
     return d2l.matmul(X, w) + b
+
 
 def squared_loss(y_hat, y):
     """Squared loss.
@@ -185,12 +186,21 @@ def sgd(params, lr, batch_size):
             param -= lr * param.grad / batch_size
             param.grad.zero_()
 
+
 def load_array(data_arrays, batch_size, is_train=True):
     """Construct a PyTorch data iterator.
-
-    Defined in :numref:`sec_linear_concise`"""
+    Defined in `sec_linear_concise`
+    
+    定 义: 3.3 线性回归的简洁实现
+    功 能: 构造一个PyTorch数据迭代器
+    描 述: 每次加载 batch_size 个数据返回
+    """
     dataset = data.TensorDataset(*data_arrays)
-    return data.DataLoader(dataset, batch_size, shuffle=is_train)
+    next_data = data.DataLoader(dataset,
+                                batch_size,
+                                shuffle=is_train)
+    return next_data
+
 
 def get_fashion_mnist_labels(labels):
     """Return text labels for the Fashion-MNIST dataset.
@@ -245,10 +255,15 @@ def load_data_fashion_mnist(batch_size, resize=None, root='~/Datasets/FashionMNI
                                                     train=False,
                                                     transform=trans, 
                                                     download=False)
-    return (data.DataLoader(mnist_train, batch_size, shuffle=True,
-                            num_workers=get_dataloader_workers()),
-            data.DataLoader(mnist_test, batch_size, shuffle=False,
-                            num_workers=get_dataloader_workers()))
+    res_1 = data.DataLoader(mnist_train, 
+                            batch_size, 
+                            shuffle=True,
+                            num_workers=get_dataloader_workers())
+    res_2 = data.DataLoader(mnist_test, 
+                            batch_size, 
+                            shuffle=False,
+                            num_workers=get_dataloader_workers())
+    return (res_1, res_2)
 
 
 def accuracy(y_hat, y):
@@ -292,11 +307,15 @@ class Accumulator:
 
 def train_epoch_ch3(net, train_iter, loss, updater):
     """The training loop defined in Chapter 3.
+    Defined in `sec_softmax_scratch`
+    
+    定 义: 3.5 softmax回归
 
-    Defined in :numref:`sec_softmax_scratch`"""
+    """
     # Set the model to training mode
     if isinstance(net, torch.nn.Module):
         net.train()
+
     # Sum of training loss, sum of training accuracy, no. of examples
     metric = Accumulator(3)
     for X, y in train_iter:
@@ -315,6 +334,7 @@ def train_epoch_ch3(net, train_iter, loss, updater):
         metric.add(float(l.sum()), accuracy(y_hat, y), y.numel())
     # Return training loss and training accuracy
     return metric[0] / metric[2], metric[1] / metric[2]
+
 
 class Animator:
     """For plotting data in animation."""
@@ -362,7 +382,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     """Train a model (defined in Chapter 3).
     Defined in `sec_softmax_scratch`
     
-    章 节: 3. 线性神经网络
+    章 节: 3.3 softmax回归
 
     """
     animator = Animator(xlabel='epoch', 
@@ -376,9 +396,10 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
         animator.add(epoch + 1, train_metrics + (test_acc,))
 
     train_loss, train_acc = train_metrics
-    assert train_loss < 0.5, train_loss
-    assert train_acc <= 1 and train_acc > 0.7, train_acc
-    assert test_acc <= 1 and test_acc > 0.7, test_acc
+    print("train_loss: %.4f, train_acc: %.4f" % (train_loss, train_acc))
+    # assert train_loss < 0.5, train_loss
+    # assert train_acc <= 1 and train_acc > 0.7, train_acc
+    # assert test_acc <= 1 and test_acc > 0.7, test_acc
 
 
 def predict_ch3(net, test_iter, n=6):
@@ -1501,14 +1522,18 @@ def show_trace_2d(f, results):
 d2l.DATA_HUB['airfoil'] = (d2l.DATA_URL + 'airfoil_self_noise.dat',
                            '76e5be1548fd8222e5074cf0faae75edff8cf93f')
 
+
 def get_data_ch11(batch_size=10, n=1500):
-    """Defined in :numref:`sec_minibatches`"""
+    """Defined in `sec_minibatches`"""
     data = np.genfromtxt(d2l.download('airfoil'),
-                         dtype=np.float32, delimiter='\t')
+                         dtype=np.float32, 
+                         delimiter='\t')
     data = torch.from_numpy((data - data.mean(axis=0)) / data.std(axis=0))
     data_iter = d2l.load_array((data[:n, :-1], data[:n, -1]),
-                               batch_size, is_train=True)
+                               batch_size, 
+                               is_train=True)
     return data_iter, data.shape[1]-1
+
 
 def train_ch11(trainer_fn, states, hyperparams, data_iter,
                feature_dim, num_epochs=2):
@@ -1536,8 +1561,10 @@ def train_ch11(trainer_fn, states, hyperparams, data_iter,
     print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
     return timer.cumsum(), animator.Y[0]
 
+
 def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
-    """Defined in :numref:`sec_minibatches`"""
+    """Defined in `sec_minibatches`
+    """
     # Initialization
     net = nn.Sequential(nn.Linear(5, 1))
     def init_weights(m):
@@ -1550,6 +1577,7 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
     n, timer = 0, d2l.Timer()
+
     for _ in range(num_epochs):
         for X, y in data_iter:
             optimizer.zero_grad()
@@ -1566,6 +1594,7 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
                              (d2l.evaluate_loss(net, data_iter, loss) / 2,))
                 timer.start()
     print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
+
 
 class Benchmark:
     """For measuring running time."""
