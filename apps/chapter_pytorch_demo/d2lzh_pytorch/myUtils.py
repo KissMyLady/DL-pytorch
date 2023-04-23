@@ -1,6 +1,7 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/4/23 4:09
+import torch
 import time
 import numpy as np
 
@@ -64,6 +65,15 @@ class Accumulator:
 
     def __getitem__(self, idx):
         return self.data[idx]
+
+
+def try_gpu(i=0):
+    """Return gpu(i) if exists, otherwise return cpu().
+
+    Defined in :numref:`sec_use_gpu`"""
+    if torch.cuda.device_count() >= i + 1:
+        return torch.device(f'cuda:{i}')
+    return torch.device('cpu')
 
 
 def main():

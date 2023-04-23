@@ -859,6 +859,7 @@ class RNNModelScratch:
     def begin_state(self, batch_size, device):
         return self.init_state(batch_size, self.num_hiddens, device)
 
+
 def predict_ch8(prefix, num_preds, net, vocab, device):
     """Generate new characters following the `prefix`.
 
@@ -875,6 +876,7 @@ def predict_ch8(prefix, num_preds, net, vocab, device):
         outputs.append(int(y.argmax(dim=1).reshape(1)))
     return ''.join([vocab.idx_to_token[i] for i in outputs])
 
+
 def grad_clipping(net, theta):
     """Clip the gradient.
 
@@ -887,6 +889,7 @@ def grad_clipping(net, theta):
     if norm > theta:
         for param in params:
             param.grad[:] *= theta / norm
+
 
 def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
     """Train a net within one epoch (defined in Chapter 8).
@@ -946,7 +949,7 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
         ppl, speed = train_epoch_ch8(
             net, train_iter, loss, updater, device, use_random_iter)
         if (epoch + 1) % 10 == 0:
-            print(predict('time traveller'))
+            # print(predict('time traveller'))
             animator.add(epoch + 1, [ppl])
     times.stop()
     print('Time consuming: %8.4f 秒' % times.sum())
@@ -1054,6 +1057,7 @@ def show_list_len_pair_hist(legend, xlabel, ylabel, xlist, ylist):
         patch.set_hatch('/')
     d2l.plt.legend(legend)
 
+
 def truncate_pad(line, num_steps, padding_token):
     """Truncate or pad sequences.
 
@@ -1062,10 +1066,14 @@ def truncate_pad(line, num_steps, padding_token):
         return line[:num_steps]  # Truncate
     return line + [padding_token] * (num_steps - len(line))  # Pad
 
+
 def build_array_nmt(lines, vocab, num_steps):
     """Transform text sequences of machine translation into minibatches.
+    Defined in `subsec_mt_data_loading`
+    
+    功 能: 将机器翻译的文本序列转换成小批量
 
-    Defined in :numref:`subsec_mt_data_loading`"""
+    """
     lines = [vocab[l] for l in lines]
     lines = [l + [vocab['<eos>']] for l in lines]
     array = d2l.tensor([truncate_pad(
@@ -1074,10 +1082,14 @@ def build_array_nmt(lines, vocab, num_steps):
         d2l.astype(array != vocab['<pad>'], d2l.int32), 1)
     return array, valid_len
 
+
 def load_data_nmt(batch_size, num_steps, num_examples=600):
     """Return the iterator and the vocabularies of the translation dataset.
-
-    Defined in :numref:`subsec_mt_data_loading`"""
+    Defined in `subsec_mt_data_loading`
+    
+    功 能: 返回翻译数据集的迭代器和词表
+    
+    """
     text = preprocess_nmt(read_data_nmt())
     source, target = tokenize_nmt(text, num_examples)
     src_vocab = d2l.Vocab(source, min_freq=2,
@@ -1089,6 +1101,7 @@ def load_data_nmt(batch_size, num_steps, num_examples=600):
     data_arrays = (src_array, src_valid_len, tgt_array, tgt_valid_len)
     data_iter = d2l.load_array(data_arrays, batch_size)
     return data_iter, src_vocab, tgt_vocab
+
 
 class Encoder(nn.Module):
     """The base encoder interface for the encoder-decoder architecture."""

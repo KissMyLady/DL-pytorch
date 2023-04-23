@@ -122,14 +122,13 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
                                      device,
                                      use_random_iter)
         if (epoch + 1) % 10 == 0:
-            print(predict('time traveller'))
+            # print(predict('说'))
             animator.add(epoch + 1, [ppl])
 
     times.stop()
     print('Time consuming: %8.4f 秒' % times.sum())
     print(f'perplexity {ppl:.1f}, {speed:.1f} tokens/sec on {str(device)}')
-    print(predict('time traveller'))
-    print(predict('traveller'))
+    print(predict('井掌柜'))
 
 
 def main():
