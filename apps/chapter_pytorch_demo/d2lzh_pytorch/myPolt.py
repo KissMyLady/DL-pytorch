@@ -83,8 +83,8 @@ class Animator:
 
 def show_list_len_pair_hist(legend, xlabel, ylabel, xlist, ylist):
     """Plot the histogram for list length pairs.
-
-    Defined in :numref:`sec_machine_translation`"""
+    Defined in :numref:`sec_machine_translation`
+    """
     set_figsize()
     _, _, patches = plt.hist([[len(l) for l in xlist], [len(l) for l in ylist]])
     plt.xlabel(xlabel)

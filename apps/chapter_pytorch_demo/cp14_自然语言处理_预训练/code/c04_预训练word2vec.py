@@ -92,8 +92,7 @@ def run():
     embed_size = 100
     # 嵌入层
     embed = nn.Embedding(num_embeddings=len(vocab), embedding_dim=embed_size)
-    net = nn.Sequential(embed,
-                        embed)
+    net = nn.Sequential(embed,embed)
 
     # 训练
     lr = 0.002

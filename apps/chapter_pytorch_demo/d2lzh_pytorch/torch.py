@@ -1320,6 +1320,7 @@ def masked_softmax(X, valid_lens):
                               value=-1e6)
         return nn.functional.softmax(X.reshape(shape), dim=-1)
 
+
 class AdditiveAttention(nn.Module):
     """Additive attention.
 
@@ -1347,6 +1348,7 @@ class AdditiveAttention(nn.Module):
         # Shape of `values`: (`batch_size`, no. of key-value pairs, value
         # dimension)
         return torch.bmm(self.dropout(self.attention_weights), values)
+
 
 class DotProductAttention(nn.Module):
     """Scaled dot product attention.
@@ -1450,10 +1452,13 @@ def transpose_output(X, num_heads):
     X = X.permute(0, 2, 1, 3)
     return X.reshape(X.shape[0], X.shape[1], -1)
 
+
 class PositionalEncoding(nn.Module):
     """Positional encoding.
 
-    Defined in :numref:`sec_self-attention-and-positional-encoding`"""
+    Defined in :numref:`sec_self-attention-and-positional-encoding`
+    位置编码
+    """
     def __init__(self, num_hiddens, dropout, max_len=1000):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(dropout)
@@ -1468,6 +1473,7 @@ class PositionalEncoding(nn.Module):
     def forward(self, X):
         X = X + self.P[:, :X.shape[1], :].to(X.device)
         return self.dropout(X)
+
 
 class PositionWiseFFN(nn.Module):
     """Positionwise feed-forward network.
@@ -2300,8 +2306,11 @@ def get_centers_and_contexts(corpus, max_window_size):
             contexts.append([line[idx] for idx in indices])
     return centers, contexts
 
+
 class RandomGenerator:
-    """Randomly draw among {1, ..., n} according to n sampling weights."""
+    """Randomly draw among {1, ..., n} according to n sampling weights.
+    根据n个采样权重在{1,...,n}中随机抽取
+    """
     def __init__(self, sampling_weights):
         """Defined in :numref:`sec_word2vec_data`"""
         # Exclude
@@ -2318,6 +2327,7 @@ class RandomGenerator:
             self.i = 0
         self.i += 1
         return self.candidates[self.i - 1]
+
 
 def get_negatives(all_contexts, vocab, counter, K):
     """Return noise words in negative sampling.
@@ -2340,6 +2350,7 @@ def get_negatives(all_contexts, vocab, counter, K):
                 negatives.append(neg)
         all_negatives.append(negatives)
     return all_negatives
+
 
 def batchify(data):
     """Return a minibatch of examples for skip-gram with negative sampling.
