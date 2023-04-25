@@ -8,7 +8,6 @@ import sys
 
 sys.path.append(".")
 sys.path.append("../..")
-from d2lzh_pytorch.attention.transformer_unit import EncoderBlock
 from d2lzh_pytorch.myUtils import Timer, Accumulator, try_gpu
 from d2lzh_pytorch.myPolt import Animator
 from d2lzh_pytorch.BERT_unit.load_data import load_data_wiki

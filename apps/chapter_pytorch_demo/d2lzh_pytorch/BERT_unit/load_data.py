@@ -11,17 +11,9 @@ import os
 sys.path.append(".")
 sys.path.append("../..")
 from d2lzh_pytorch.BERT_unit.BERT_model import get_tokens_and_segments
-from d2lzh_pytorch.attention.transformer_unit import EncoderBlock
 from d2lzh_pytorch.load_chinese_txt_data import tokenize
 from d2lzh_pytorch.load_Vocab import Vocab
 from d2lzh_pytorch.download_unit import download_extract
-
-
-# d2l.DATA_HUB['wikitext-2'] = (
-#     'https://s3.amazonaws.com/research.metamind.io/wikitext/'
-#     'wikitext-2-v1.zip',
-#     '3c914d17d80b1459be871a5039ac23e752a53cbe'
-# )
 
 
 def _read_wiki(data_dir):
