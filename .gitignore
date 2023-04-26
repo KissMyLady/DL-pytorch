@@ -18,6 +18,7 @@
 Lhy_Machine_Learning/
 OpenCV_基础教程/
 
+**/logs/*
 **/data/*
 **/data/faces_dynamic/
 **/data/face/

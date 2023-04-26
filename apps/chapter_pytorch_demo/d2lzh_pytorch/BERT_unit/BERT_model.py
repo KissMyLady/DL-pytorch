@@ -46,14 +46,20 @@ class BERTEncoder(nn.Module):
                  max_len=1000, key_size=768, query_size=768, value_size=768,
                  **kwargs):
         super(BERTEncoder, self).__init__(**kwargs)
+
         self.token_embedding = nn.Embedding(vocab_size, num_hiddens)
         self.segment_embedding = nn.Embedding(2, num_hiddens)
         self.blks = nn.Sequential()
+
         for i in range(num_layers):
-            self.blks.add_module(f"{i}", EncoderBlock(key_size, query_size, value_size, num_hiddens, norm_shape,
-                                                      ffn_num_input, ffn_num_hiddens, num_heads, dropout, True))
+            self.blks.add_module(f"{i}", EncoderBlock(key_size, query_size, value_size,
+                                                      num_hiddens, norm_shape,
+                                                      ffn_num_input, ffn_num_hiddens,
+                                                      num_heads, dropout,
+                                                      True))
         # 在BERT中, 位置嵌入是可学习的, 因此我们创建一个足够长的位置嵌入参数
-        self.pos_embedding = nn.Parameter(torch.randn(1, max_len,
+        self.pos_embedding = nn.Parameter(torch.randn(1,
+                                                      max_len,
                                                       num_hiddens))
 
     def forward(self, tokens, segments, valid_lens):
@@ -125,6 +131,7 @@ class BERTModel(nn.Module):
                  nsp_in_features=768):
 
         super(BERTModel, self).__init__()
+        # 编码层
         self.encoder = BERTEncoder(vocab_size,
                                    num_hiddens, norm_shape,
                                    ffn_num_input, ffn_num_hiddens,
@@ -135,10 +142,11 @@ class BERTModel(nn.Module):
                                    query_size=query_size,
                                    value_size=value_size
                                    )
-
+        # 隐藏层
         self.hidden = nn.Sequential(
             nn.Linear(hid_in_features, num_hiddens),
-            nn.Tanh())
+            nn.Tanh()
+        )
         self.mlm = MaskLM(vocab_size, num_hiddens, mlm_in_features)
         self.nsp = NextSentencePred(nsp_in_features)
 

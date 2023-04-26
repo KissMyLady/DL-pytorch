@@ -108,9 +108,9 @@ class BERTClassifier(nn.Module):
 
     def __init__(self, bert):
         super(BERTClassifier, self).__init__()
-        self.encoder = bert.encoder
-        self.hidden = bert.hidden
-        self.output = nn.Linear(256, 3)
+        self.encoder = bert.encoder  # 复制编码层
+        self.hidden = bert.hidden    # 复制隐藏层
+        self.output = nn.Linear(256, 3)  # 自定义输出层
 
     def forward(self, inputs):
         tokens_X, segments_X, valid_lens_x = inputs
@@ -118,21 +118,15 @@ class BERTClassifier(nn.Module):
         return self.output(self.hidden(encoded_X[:, 0, :]))
 
 
-def run():
-    devices = try_all_gpus()
-    # devices = [torch.device('cpu')]
-
-    # 加载词向量
-    bert, vocab = load_pretrained_model('bert.small',
-                                        num_hiddens=256,
-                                        ffn_num_hiddens=512,
-                                        num_heads=4,
-                                        num_layers=2,
-                                        dropout=0.1,
-                                        max_len=512,
-                                        devices=devices)
-
-    # 如果出现显存不足错误，请减少“batch_size”。在原始的BERT模型中，max_len=512
+def load_data(vocab):
+    """
+    数据调用, 返回格式:
+    for X, Y in train_iter:
+        print(X[0].shape)  # 512, 128
+        print(X[1].shape)  # 512, 128
+        print(Y.shape)     # 512
+        break
+    """
     batch_size = 512
     max_len = 128
     num_workers = 4
@@ -151,6 +145,25 @@ def run():
     test_iter = torch.utils.data.DataLoader(test_set,
                                             batch_size,
                                             num_workers=num_workers)
+    return train_iter, test_iter
+
+
+def run():
+    devices = try_all_gpus()
+    # devices = [torch.device('cpu')]
+
+    # 加载词向量
+    bert, vocab = load_pretrained_model('bert.small',
+                                        num_hiddens=256,
+                                        ffn_num_hiddens=512,
+                                        num_heads=4,
+                                        num_layers=2,
+                                        dropout=0.1,
+                                        max_len=512,
+                                        devices=devices)
+
+    # 加载数据
+    train_iter, test_iter = load_data(vocab)
 
     # 模型及参数
     net = BERTClassifier(bert)
