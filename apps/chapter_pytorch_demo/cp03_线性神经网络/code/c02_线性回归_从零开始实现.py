@@ -128,7 +128,8 @@ def main():
     print(f'b的估计误差: {true_b - b}')
 
 
-main()
+if __name__ == "__main__":
+    main()
 
 
 

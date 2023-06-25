@@ -32,10 +32,11 @@ def main():
 
     # 模型
     net = nn.Sequential(
-        nn.Linear(2, 1)
-    )
+        nn.Linear(2, 1))
+
     # 损失
     loss = nn.MSELoss()
+
     # 优化算法
     trainer = torch.optim.SGD(net.parameters(), lr=0.03)
 
@@ -58,8 +59,8 @@ def main():
         y_heat = net(features)
         l = loss(y_heat, labels)
         print(f'epoch {epoch + 1}, loss {l:f}')
-
     pass
 
 
-main()
+if __name__ == "__main__":
+    main()

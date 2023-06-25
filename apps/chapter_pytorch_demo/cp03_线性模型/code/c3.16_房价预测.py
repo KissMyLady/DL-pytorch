@@ -9,9 +9,9 @@ import numpy as np
 import pandas as pd
 import sys
 
-sys.path.append("..")
+sys.path.append("../..")
 # import d2lzh_pytorch as d2l
-from apps.chapter_pytorch_demo import d2lzh_pytorch as d2l
+from chapter_pytorch_demo import d2lzh_pytorch as d2l
 
 
 print(torch.__version__)
@@ -184,6 +184,12 @@ def k_fold(k, X_train, y_train, num_epochs,
 
 
 def run_v1():
+
+    # 加载训练数据
+    # ~/Datasets/kaggle_house/train.csv
+    # /mnt/aiguo/ai_data/Datasets_on_HHD/kaggle_house
+
+
     # 启动
     k = 5
     num_epochs = 100
@@ -225,6 +231,62 @@ def train_and_pred(train_features, test_features, train_labels, test_data,
 
 # 执行
 def run_v2():
+
+    # ~/Datasets/kaggle_house/train.csv
+    # /mnt/aiguo/ai_data/Datasets_on_HHD/kaggle_house
+
+    # 加载数据
+    # train_data = pd.read_csv('~/Datasets/kaggle_house/train.csv')
+    train_data = pd.read_csv('/mnt/aiguo/ai_data/Datasets_on_HHD/kaggle_house/train.csv')
+    # test_data = pd.read_csv('~/Datasets/kaggle_house/test.csv')
+    test_data = pd.read_csv('K:\\code_big\\kaggle_house\\test.csv')
+
+    # 不要 id, y 标签数据
+    trainData_not_label = train_data.iloc[:, 1:-1]
+
+    # 不要 id 数据. (test没y数据)
+    testData_not_label = test_data.iloc[:, 1:]
+
+    # 得到全部特征
+    all_features = pd.concat((trainData_not_label,
+                            testData_not_label
+                            ))
+
+    # 这里只提取 数字类型的特征
+    numeric_features = all_features.dtypes[all_features.dtypes != 'object'].index
+
+
+    # 只有36行的 数字类型特征
+    features_36 = all_features[numeric_features]
+
+
+    # 特征值标准化
+    all_features[numeric_features] = features_36.apply(
+        lambda x: (x - x.mean()) / (x.std())
+    )
+
+    # 标准化后，每个数值特征的均值变为 0，所以可以直接用 0 来替换缺失值
+    all_features[numeric_features] = all_features[numeric_features].fillna(0)
+
+    # dummy_na=True将缺失值也当作合法的特征值并为其创建指示特征
+    # 将 object 等描述性特征, 转成 int类型特征
+    all_features = pd.get_dummies(all_features, dummy_na=True)
+
+
+    # 训练-测试数据
+    n_train = train_data.shape[0]  # 1460
+
+    train_data_1460 = all_features[:n_train].values  # 1460 条
+    test_data_1459 = all_features[n_train:].values   # 1459 条
+
+    train_features = torch.tensor(train_data_1460, dtype=torch.float)
+    test_features  = torch.tensor(test_data_1459, dtype=torch.float)
+
+    train_labels = torch.tensor(train_data.SalePrice.values,
+                                dtype=torch.float
+                            ).view(-1, 1)
+
+
     num_epochs = 100
     lr = 5
     weight_decay = 0

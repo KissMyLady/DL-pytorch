@@ -238,8 +238,9 @@ def get_dataloader_workers():
     """
     return 4
 
-
-def load_data_fashion_mnist(batch_size, resize=None, root='~/Datasets/FashionMNIST'):
+# ~/Datasets/FashionMNIST
+# /mnt/g1t/ai_data/Datasets_on_HHD
+def load_data_fashion_mnist(batch_size, resize=None, root='/mnt/g1t/ai_data/Datasets_on_HHD'):
     """Download the Fashion-MNIST dataset and then load it into memory.
     Defined in `sec_fashion_mnist`
     """

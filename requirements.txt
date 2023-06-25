@@ -12,3 +12,16 @@
 ## huggingface
 # pip install datasets
 # pip install transformers
+
+notebook
+jupyterlab
+jupyter_contrib_nbextensions
+jupyterthemes
+jupyterlab-language-pack-zh-CN
+
+# torch
+# torchvision
+# torchaudio
+# colorlog
+# datasets
+# transformers

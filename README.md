@@ -23,6 +23,21 @@ zh-d2l.ai书籍 在线阅读地址:
 书籍下载地址: 
 - [https://zh-v2.d2l.ai/d2l-zh-pytorch.pdf](https://zh-v2.d2l.ai/d2l-zh-pytorch.pdf)
 
+## conda环境安装
+```sh
+# 创建
+$ conda create -n dl-pytorch python=3.8.10
+
+# 激活
+$ conda activate dl-pytorch
+
+# 退出
+$ conda deactivate
+
+# 删除
+$ conda remove --name <env_name> --all
+```
+
 
 ## 常用命令
 
