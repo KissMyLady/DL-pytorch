@@ -1,22 +1,27 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/3/19 13:17
+from chapter_pytorch_demo import d2lzh_pytorch as d2l
 import time
 import torch
 from torch import nn, optim
 
-import sys
-
-sys.path.append("..")
 # import d2lzh_pytorch as d2l
-from apps.chapter_pytorch_demo import d2lzh_pytorch as d2l
+
+import sys
+sys.path.append("../..")
+
 
 # 获取设备
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
 # 获取训练数据
 batch_size = 256
-train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size=batch_size, root="K:\code_big")
+train_iter, test_iter = d2l.load_data_fashion_mnist(
+    batch_size=batch_size,
+    root="/mnt/g1t/ai_data/Datasets_on_HHD/FashionMNIST"
+)
 
 
 class LeNet(nn.Module):
@@ -111,12 +116,13 @@ def train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epo
             n += y.shape[0]
             batch_count += 1
             pass
+
         test_acc = evaluate_accuracy(test_iter, net)
 
-        epoch_count = epoch + 1  # 训练批次
+        epoch_count = epoch + 1              # 训练批次
         loss_cp = train_l_sum / batch_count  # 损失计算
-        train_acc = train_acc_sum / n  # 正确率
-        time_consume = time.time() - start  # 耗时
+        train_acc = train_acc_sum / n        # 正确率
+        time_consume = time.time() - start   # 耗时
 
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, time_ %.1f sec'
               % (epoch_count, loss_cp, train_acc, test_acc, time_consume)
@@ -124,22 +130,30 @@ def train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epo
 
 
 def run_1():
+
     lr = 0.001
     num_epochs = 10
 
-    # 模型构建
+    # 模型
     net = LeNet()
 
+    # 优化器
     optimizer = torch.optim.Adam(net.parameters(),
-                                 lr=lr
-                                 )
+                                 lr=lr)
 
     # 训练
     train_ch5(net, train_iter, test_iter,
-              batch_size, optimizer,
+              batch_size, 
+              optimizer,
               device,
               num_epochs
               )
+
+    # 保存模型
+    import datetime
+    str_time = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    torch.save(net, 'leNet_%s.pt' % str_time)  # 全保存 39M
+    print("训练完毕, 模型已保存至当前路径")
     pass
 
 

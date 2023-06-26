@@ -1,17 +1,10 @@
-# coding:utf-8
-# Author:mylady
-# Datetime:2023/3/19 15:07
-import time
 import torch
-from torch import nn, optim
+from torch import nn
+import torch.nn.functional as F
 
 import sys
-
 sys.path.append("..")
-# import d2lzh_pytorch as d2l
-from apps.chapter import d2lzh_pytorch as d2l
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+from d2lzh_pytorch.utils import FlattenLayer
 
 
 def vgg_block(num_convs, in_channels, out_channels):
@@ -34,17 +27,9 @@ def vgg_block(num_convs, in_channels, out_channels):
     return nn.Sequential(*blk)
 
 
-# VGG网络
-conv_arch = ((1, 1, 64),
-             (1, 64, 128),
-             (2, 128, 256),
-             (2, 256, 512),
-             (2, 512, 512)
-             )
-
-
 def vgg(conv_arch, fc_features, fc_hidden_units=4096):
     net = nn.Sequential()
+
     # 卷积层部分
     for i, (num_convs, in_channels, out_channels) in enumerate(conv_arch):
         # 每经过一个vgg_block都会使宽高减半
@@ -54,12 +39,14 @@ def vgg(conv_arch, fc_features, fc_hidden_units=4096):
                                  out_channels
                                  ))
         pass
+
     # 全连接层部分
-    net.add_module("fc", nn.Sequential(d2l.FlattenLayer(),
+    net.add_module("fc", nn.Sequential(FlattenLayer(),
                                        nn.Linear(fc_features, fc_hidden_units),
                                        nn.ReLU(),
                                        nn.Dropout(0.5),
-                                       nn.Linear(fc_hidden_units, fc_hidden_units),
+                                       nn.Linear(fc_hidden_units,
+                                                 fc_hidden_units),
                                        nn.ReLU(),
                                        nn.Dropout(0.5),
                                        nn.Linear(fc_hidden_units, 10)
@@ -67,11 +54,7 @@ def vgg(conv_arch, fc_features, fc_hidden_units=4096):
     return net
 
 
-def main():
-    batch_size = 64
-    train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=224)
-
-    # 经过5个vgg_block, 宽高会减半5次, 变成 224/32 = 7
+def get_VGG_model():
     fc_features = 512 * 7 * 7  # c * w * h
     fc_hidden_units = 4096  # 任意
 
@@ -87,21 +70,21 @@ def main():
               fc_features // ratio,
               fc_hidden_units // ratio
               )
+    return net
 
-    lr = 0.001
-    num_epochs = 5
 
-    optimizer = torch.optim.Adam(net.parameters(), lr=lr)
+# 实例化演示
+def main():
+    # 加载已训练好的模型
+    m_name = "VGG_net_2023-06-26_22-56-27.pt"  # 7.8M
 
-    # 训练
-    d2l.train_ch5(net, train_iter, test_iter,
-                  batch_size,
-                  optimizer,
-                  device,
-                  num_epochs
-                  )
+    model = torch.load(m_name)
+
+    VGG = get_VGG_model()
+    VGG.load_state_dict(model.state_dict())
     pass
+ 
 
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    # main()
+    pass

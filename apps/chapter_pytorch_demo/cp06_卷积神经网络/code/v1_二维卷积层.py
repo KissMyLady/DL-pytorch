@@ -35,8 +35,6 @@ class Conv2D(nn.Module):
     def forward(self, x):
         return corr2d(x, self.weight) + self.bias
 
-    pass
-
 
 # 二维互相关运算
 def test_1():
