@@ -9,7 +9,7 @@ import sys
 sys.path.append("../..")
 import d2lzh_pytorch.torch as d2l
 
-import d2lzh_pytorch.load_chinese_txt_data as load_chinese  # 加载中文训练数据
+import d2lzh_pytorch.nlp.load_chinese_txt_data as load_chinese  # 加载中文训练数据
 import d2lzh_pytorch.rnn_train_chinese as train_chinese  # 加载训练模块
 import d2lzh_pytorch.rnn_model as RNNModel  # 加载RNN模型
 

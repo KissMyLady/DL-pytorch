@@ -434,7 +434,8 @@ def evaluate_loss(net, data_iter, loss):
 DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
-def download(name, cache_dir=os.path.join('..', 'data')):
+# def download(name, cache_dir=os.path.join('..', 'data')):
+def download(name, cache_dir=os.path.join('/mnt/g1t/ai_data/Datasets_on_HHD', 'data')):
     """Download a file inserted into DATA_HUB, return the local filename.
 
     Defined in :numref:`sec_kaggle_house`"""
