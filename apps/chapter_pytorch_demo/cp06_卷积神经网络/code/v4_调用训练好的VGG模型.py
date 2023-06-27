@@ -49,25 +49,41 @@ def predict_ch3(net, test_iter, n=6):  # @save
     pass
 
 
-def test_1():
+def load_model_v2():
     # 加载已训练好的模型
-    m_name = "VGG_net_2023-06-26_22-56-27.pt"  # 7.8M
-
+    m_name = "../VGG_net_cpu_2023_06_27_11-53-28.pt"  # 7.8M
     model = torch.load(m_name)
-
     VGG = get_VGG_model()
     VGG.load_state_dict(model.state_dict())
+    return VGG
 
-    # print(model, model.state_dict())
+def load_model_v2():
+    # 加载已训练好的模型
+    m_name = "../VGG_net_cpu_2023_06_27_11-53-28.pt"  # 7.8M
+    VGG = torch.load(m_name)
+    return VGG
+
+
+def load_test_data():
+    # # 加载数据
     batch_size = 256
     rootPath = r"/mnt/g1t/ai_data/Datasets_on_HHD/FashionMNIST"
     train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size,
                                                         resize=224,
-                                                        root=rootPath
-                                                        )
+                                                        root=rootPath)
+    return test_iter
+
+
+def test_1():
+    # 加载数据
+    test_iter = load_test_data()
+
+    # 加载模型
+    VGG = load_model_v2()
 
     test_n = 6
 
+    # 计算正确率
     predict_ch3(VGG,
                 test_iter,
                 n=test_n)

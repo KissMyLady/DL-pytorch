@@ -102,10 +102,12 @@ def main():
               device,
               num_epochs)
 
+    vgg_net = vgg_net.to("cpu")
+
     # 保存模型
     import datetime
     str_time = str(datetime.datetime.now().strftime("%Y_%m_%d_%H-%M-%S"))
-    torch.save(net, 'VGG_net_%s.pt' % str_time)  # 全保存 39M
+    torch.save(vgg_net, 'VGG_net_cpu_%s.pt' % str_time)  # 全保存 39M
     print("训练完毕, 模型已保存至当前路径")
     pass
 

@@ -596,6 +596,7 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr, device):
     # 直接打印最后的结果
     print(f'loss {train_l:.3f}, train acc {train_acc:.3f}, '
           f'test acc {test_acc:.3f}')
+    print("time final_time: %s" % timer.final_time())
     print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
           f'on {str(device)}')
 

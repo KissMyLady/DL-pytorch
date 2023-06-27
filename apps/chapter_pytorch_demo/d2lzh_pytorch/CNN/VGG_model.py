@@ -73,15 +73,8 @@ def get_VGG_model():
     return net
 
 
-# 实例化演示
+
 def main():
-    # 加载已训练好的模型
-    m_name = "VGG_net_2023-06-26_22-56-27.pt"  # 7.8M
-
-    model = torch.load(m_name)
-
-    VGG = get_VGG_model()
-    VGG.load_state_dict(model.state_dict())
     pass
  
 
