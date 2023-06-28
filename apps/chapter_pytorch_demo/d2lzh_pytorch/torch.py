@@ -1482,6 +1482,19 @@ class PositionalEncoding(nn.Module):
         return self.dropout(X)
 
 
+class AddNorm(nn.Module):
+    """Residual connection followed by layer normalization.
+
+    Defined in :numref:`sec_transformer`"""
+    def __init__(self, normalized_shape, dropout, **kwargs):
+        super(AddNorm, self).__init__(**kwargs)
+        self.dropout = nn.Dropout(dropout)
+        self.ln = nn.LayerNorm(normalized_shape)
+
+    def forward(self, X, Y):
+        return self.ln(self.dropout(Y) + X)
+
+
 class PositionWiseFFN(nn.Module):
     """Positionwise feed-forward network.
 
@@ -1520,9 +1533,9 @@ class EncoderBlock(nn.Module):
                  norm_shape, ffn_num_input, ffn_num_hiddens, num_heads,
                  dropout, use_bias=False, **kwargs):
         super(EncoderBlock, self).__init__(**kwargs)
-        self.attention = d2l.MultiHeadAttention(
-            key_size, query_size, value_size, num_hiddens, num_heads, dropout,
-            use_bias)
+        self.attention = MultiHeadAttention(key_size, query_size, value_size, 
+                                            num_hiddens, num_heads, 
+                                            dropout, use_bias)
         self.addnorm1 = AddNorm(norm_shape, dropout)
         self.ffn = PositionWiseFFN(
             ffn_num_input, ffn_num_hiddens, num_hiddens)
@@ -1533,6 +1546,7 @@ class EncoderBlock(nn.Module):
         return self.addnorm2(Y, self.ffn(Y))
 
 
+# 模型封装
 class TransformerEncoder(d2l.Encoder):
     """Transformer encoder.
 
@@ -1543,7 +1557,7 @@ class TransformerEncoder(d2l.Encoder):
         super(TransformerEncoder, self).__init__(**kwargs)
         self.num_hiddens = num_hiddens
         self.embedding = nn.Embedding(vocab_size, num_hiddens)
-        self.pos_encoding = d2l.PositionalEncoding(num_hiddens, dropout)
+        self.pos_encoding = PositionalEncoding(num_hiddens, dropout)
         self.blks = nn.Sequential()
         for i in range(num_layers):
             self.blks.add_module("block"+str(i),
@@ -1559,8 +1573,7 @@ class TransformerEncoder(d2l.Encoder):
         self.attention_weights = [None] * len(self.blks)
         for i, blk in enumerate(self.blks):
             X = blk(X, valid_lens)
-            self.attention_weights[
-                i] = blk.attention.attention.attention_weights
+            self.attention_weights[i] = blk.attention.attention.attention_weights
         return X
 
 def annotate(text, xy, xytext):

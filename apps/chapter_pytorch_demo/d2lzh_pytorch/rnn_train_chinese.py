@@ -9,8 +9,8 @@ import math
 import sys
 sys.path.append(".")
 
-import d2lzh_pytorch.myPolt as myPolt
-import d2lzh_pytorch.myUtils as myUtils
+from d2lzh_pytorch import myUtils
+from d2lzh_pytorch import myPolt
 
 
 reshape = lambda x, *args, **kwargs: x.reshape(*args, **kwargs)

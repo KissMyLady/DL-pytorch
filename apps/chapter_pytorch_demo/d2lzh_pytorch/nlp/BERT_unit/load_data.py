@@ -8,7 +8,7 @@ import random
 import sys
 import os
 
-sys.path.append(".")
+sys.path.append("..")
 sys.path.append("../..")
 from d2lzh_pytorch.BERT_unit.BERT_model import get_tokens_and_segments
 from d2lzh_pytorch.load_chinese_txt_data import tokenize

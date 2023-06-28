@@ -1,15 +1,16 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/4/23 7:43
+import sys
+sys.path.append("../..")
+import d2lzh_pytorch.torch as d2l
+
 import torch
 from torch.utils import data
 
-import sys
+# 引入词表 将字符串映射到从0开始的数字索引中
+from d2lzh_pytorch.nlp.load_data.load_time_machine import Vocab
 
-sys.path.append(".")
-sys.path.append("../..")
-
-from d2lzh_pytorch.load_Vocab import Vocab
 
 reduce_sum = lambda x, *args, **kwargs: x.sum(*args, **kwargs)
 astype = lambda x, *args, **kwargs: x.type(*args, **kwargs)
@@ -30,15 +31,16 @@ def read_data_nmt():
         Help!   À l'aide!
         Jump.   Saute.
     """
-    filePath = r"/home/mylady/code/python/DL-pytorch/apps/chapter_pytorch_demo/data/fra-eng/fra.txt"
+    # 注意防火墙.下载地址: http://d2l-data.s3-accelerate.amazonaws.com/fra-eng.zip
+    # data_dir = d2l.download_extract('fra-eng')
+
+    filePath = r"/mnt/g1t/ai_data/Datasets_on_HHD/NLP/fra-eng/fra.txt"
     with open(filePath, 'r', encoding='utf8') as f:
         return f.read()
 
 
 def preprocess_nmt(text):
-    """Preprocess the English-French dataset.
-    Defined in `sec_machine_translation`
-
+    """
     定 义: 9.5 机器翻译与数据集
     功 能: 预处理“英语－法语”数据集
     """
@@ -74,12 +76,9 @@ def tokenize_nmt(text, num_examples=None):
 
 
 def truncate_pad(line, num_steps, padding_token):
-    """Truncate or pad sequences.
-    Defined in `sec_machine_translation`
-
+    """
     定 义: 9.5 机器翻译与数据集
     功 能: 截断或填充文本序列
-
     """
     if len(line) > num_steps:
         return line[:num_steps]  # 截断 Truncate
@@ -87,12 +86,9 @@ def truncate_pad(line, num_steps, padding_token):
 
 
 def build_array_nmt(lines, vocab, num_steps):
-    """Transform text sequences of machine translation into minibatches.
-    Defined in `subsec_mt_data_loading`
-
+    """
     定 义: 9.5 机器翻译与数据集
     功 能: 将机器翻译的文本序列转换成小批量
-
     """
     lines = [vocab[l] for l in lines]
     lines = [l + [vocab['<eos>']] for l in lines]
@@ -102,9 +98,7 @@ def build_array_nmt(lines, vocab, num_steps):
 
 
 def load_array(data_arrays, batch_size, is_train=True):
-    """Construct a PyTorch data iterator.
-    Defined in `sec_linear_concise`
-
+    """
     定 义: 3.3 线性回归的简洁实现
     功 能: 构造一个PyTorch数据迭代器
     描 述: 每次加载 batch_size 个数据返回
@@ -117,11 +111,8 @@ def load_array(data_arrays, batch_size, is_train=True):
 
 
 def load_data_nmt(batch_size, num_steps, num_examples=600):
-    """Return the iterator and the vocabularies of the translation dataset.
-    Defined in `subsec_mt_data_loading`
-
+    """
     功 能: 返回翻译数据集的迭代器和词表
-
     """
     # 预处理
     text = preprocess_nmt(read_data_nmt())
@@ -141,8 +132,8 @@ def load_data_nmt(batch_size, num_steps, num_examples=600):
     return data_iter, src_vocab, tgt_vocab
 
 
-def main():
-    # 使用
+def test_2():
+    # 使用 load_data_nmt 加载数据
     train_iter, src_vocab, tgt_vocab = load_data_nmt(batch_size=2, num_steps=8)
 
     for X, X_valid_len, Y, Y_valid_len in train_iter:
@@ -154,5 +145,10 @@ def main():
     pass
 
 
+def main():
+    pass
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    pass
