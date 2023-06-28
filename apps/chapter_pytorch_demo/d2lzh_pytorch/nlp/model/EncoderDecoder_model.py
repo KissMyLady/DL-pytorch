@@ -12,7 +12,7 @@ import collections
 
 
 from d2lzh_pytorch import myUtils
-from d2lzh_pytorch.nlp.load_data.load_nmt_data import load_data_nmt
+
 
 
 class Encoder(nn.Module):
@@ -121,6 +121,8 @@ def get_EncoderDecoder_model():
     """
     返回一个 EncoderDecoder 模型
     """
+    from d2lzh_pytorch.nlp.load_data.load_nmt_data import load_data_nmt
+    
     embed_size = 32
     num_hiddens = 32
     num_layers = 2

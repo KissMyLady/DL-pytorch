@@ -44,6 +44,7 @@ def masked_softmax(X, valid_lens):
 
 
 class DotProductAttention(nn.Module):
+
     def __init__(self, dropout, **kwargs):
         super(DotProductAttention, self).__init__(**kwargs)
         self.dropout = nn.Dropout(dropout)
