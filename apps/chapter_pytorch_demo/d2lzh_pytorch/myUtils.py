@@ -14,6 +14,22 @@ import numpy as np
 DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
+#@save
+DATA_HUB['SNLI'] = (
+    'https://nlp.stanford.edu/projects/snli/snli_1.0.zip',
+    '9fcde07509c7e87ec61c640c1b2753d9041758e4')
+
+
+# data_dir = download_extract('SNLI')   # 857M
+
+
+def get_dataloader_workers():
+    """Use 4 processes to read the data.
+    Defined in `sec_fashion_mnist`
+    
+    """
+    return 4
+
 
 class Timer:
     """Record multiple running times."""
@@ -95,9 +111,9 @@ def try_all_gpus():
 
 
 def download(name, cache_dir=os.path.join('/mnt/g1t/ai_data/Datasets_on_HHD', 'data')):
-    """Download a file inserted into DATA_HUB, return the local filename.
-
-    Defined in :numref:`sec_kaggle_house`"""
+    """
+        Download a file inserted into DATA_HUB, return the local filename.
+    """
     assert name in DATA_HUB, f"{name} does not exist in {DATA_HUB}."
     url, sha1_hash = DATA_HUB[name]
     os.makedirs(cache_dir, exist_ok=True)

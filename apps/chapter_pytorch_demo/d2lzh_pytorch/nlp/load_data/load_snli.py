@@ -25,8 +25,12 @@ def read_snli(data_dir, is_train):
     label_set = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
     file_name = os.path.join(data_dir, 'snli_1.0_train.txt'
                              if is_train else 'snli_1.0_test.txt')
+    
+    # 读取文本数据
     with open(file_name, 'r') as f:
         rows = [row.split('\t') for row in f.readlines()[1:]]
+    
+    # 转列表
     premises = [extract_text(row[1]) for row in rows if row[0] in label_set]
     hypotheses = [extract_text(row[2]) for row in rows if row[0] in label_set]
     labels = [label_set[row[0]] for row in rows if row[0] in label_set]
