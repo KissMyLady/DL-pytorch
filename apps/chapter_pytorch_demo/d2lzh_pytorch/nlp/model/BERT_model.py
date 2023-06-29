@@ -222,8 +222,11 @@ class NextSentencePred(nn.Module):
 
 class BERTModel(nn.Module):
     """BERT模型"""
-    def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,
-                 ffn_num_hiddens, num_heads, num_layers, dropout,
+    def __init__(self, vocab_size, 
+                 num_hiddens,  norm_shape, 
+                 ffn_num_input, ffn_num_hiddens, 
+                 num_heads, num_layers, 
+                 dropout,
                  max_len=1000, 
                  key_size=768, query_size=768, value_size=768,
                  hid_in_features=768, 
@@ -254,11 +257,11 @@ class BERTModel(nn.Module):
         return encoded_X, mlm_Y_hat, nsp_Y_hat
 
 
-def get_BERT_model():
+def get_BERT_model(len_vocab=20256):
     #from d2lzh_pytorch.nlp.load_data.load_wiki import load_data_wiki
 
-    #batch_size = 512
-    #max_len = 64
+    # batch_size = 512
+    # max_len = 64
 
     # 加载数据
     # train_iter, vocab = load_data_wiki(batch_size, max_len)
@@ -274,8 +277,8 @@ def get_BERT_model():
     值得注意的是，前者有1.1亿个参数，后者有3.4亿个参数。
         为了便于演示，我们定义了一个小的BERT，使用了2层、128个隐藏单元和2个自注意头。
     """
-    len_vocab = 20256
-    #net = BERTModel(len(vocab),
+    # len_vocab = 20256
+    # net = BERTModel(len(vocab),
     net = BERTModel(len_vocab,
                     num_hiddens=128,
                     norm_shape=[128],

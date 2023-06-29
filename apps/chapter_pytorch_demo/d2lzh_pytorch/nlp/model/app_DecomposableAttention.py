@@ -1,6 +1,7 @@
 
 import torch
 from torch import nn
+from torch.nn import functional as F
 
 
 def mlp(num_inputs, num_hiddens, flatten):
@@ -71,12 +72,12 @@ class Aggregate(nn.Module):
 # 自然也语言推断, 使用注意力
 class DecomposableAttention(nn.Module):
     
-    def __init__(self, vocab, embed_size, num_hiddens, 
+    def __init__(self, len_vocab, embed_size, num_hiddens, 
                  num_inputs_attend=100,
                  num_inputs_compare=200, 
                  num_inputs_agg=400, **kwargs):
         super(DecomposableAttention, self).__init__(**kwargs)
-        self.embedding = nn.Embedding(len(vocab), embed_size)
+        self.embedding = nn.Embedding(len_vocab, embed_size)
         self.attend = Attend(num_inputs_attend, num_hiddens)
         self.compare = Compare(num_inputs_compare, num_hiddens)
         # 有3种可能的输出：蕴涵、矛盾和中性
@@ -90,6 +91,23 @@ class DecomposableAttention(nn.Module):
         V_A, V_B = self.compare(A, B, beta, alpha)
         Y_hat = self.aggregate(V_A, V_B)
         return Y_hat
+
+
+def get_DecomposableAttention():
+    # from d2lzh_pytorch.nlp.load_data.load_time_machine import Vocab
+    # from d2lzh_pytorch.nlp.load_data.load_snli import load_data_snli
+    # batch_size = 256
+    # num_steps = 50
+    # train_iter, test_iter, vocab = load_data_snli(batch_size, num_steps)
+
+    # len_vocab = len(vocab)
+    len_vocab = 18678
+
+    embed_size = 100
+    num_hiddens = 200
+
+    net = DecomposableAttention(len_vocab, embed_size, num_hiddens)
+    return net
 
 
 def main():

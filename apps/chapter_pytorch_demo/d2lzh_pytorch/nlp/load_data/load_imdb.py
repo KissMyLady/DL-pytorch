@@ -95,7 +95,9 @@ def load_data_imdb(batch_size, num_steps=500):
                                     vocab['<pad>']
                                     ) for line in train_tokens])
     
-    test_features = torch.tensor([truncate_pad(vocab[line], num_steps, vocab['<pad>']) for line in test_tokens])
+    test_features = torch.tensor([truncate_pad(vocab[line], 
+                                               num_steps, 
+                                               vocab['<pad>']) for line in test_tokens])
 
     # 数据返回
     train_iter = load_array((train_features, 
