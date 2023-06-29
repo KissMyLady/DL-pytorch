@@ -235,11 +235,15 @@ class BERTModel(nn.Module):
         super(BERTModel, self).__init__()
         
         # encoded_X
-        self.encoder = BERTEncoder(vocab_size, num_hiddens, norm_shape,
+        self.encoder = BERTEncoder(vocab_size, 
+                                   num_hiddens, norm_shape,
                                    ffn_num_input, ffn_num_hiddens, 
                                    num_heads, num_layers,
-                                   dropout, max_len=max_len, key_size=key_size,
-                                   query_size=query_size, value_size=value_size)
+                                   dropout, 
+                                   max_len=max_len, 
+                                   key_size=key_size,
+                                   query_size=query_size,
+                                   value_size=value_size)
         
         self.hidden = nn.Sequential(nn.Linear(hid_in_features, num_hiddens),
                                     nn.Tanh())

@@ -93,6 +93,7 @@ class DecomposableAttention(nn.Module):
         return Y_hat
 
 
+# 可分解性 注意力模型
 def get_DecomposableAttention():
     # from d2lzh_pytorch.nlp.load_data.load_time_machine import Vocab
     # from d2lzh_pytorch.nlp.load_data.load_snli import load_data_snli
