@@ -1,22 +1,12 @@
+import sys
+sys.path.append("..")
+sys.path.append("../..")
+
 import torch
 from torch import nn
 from torch.nn import functional as F
-
-
-class RNNModelScratch:
-    """从零开始实现的循环神经网络模型"""
-    def __init__(self, vocab_size, num_hiddens, device,
-                 get_params, init_state, forward_fn):
-        self.vocab_size, self.num_hiddens = vocab_size, num_hiddens
-        self.params = get_params(vocab_size, num_hiddens, device)
-        self.init_state, self.forward_fn = init_state, forward_fn
-
-    def __call__(self, X, state):
-        X = F.one_hot(X.T, self.vocab_size).type(torch.float32)
-        return self.forward_fn(X, state, self.params)
-
-    def begin_state(self, batch_size, device):
-        return self.init_state(batch_size, self.num_hiddens, device)
+from d2lzh_pytorch.myUtils import try_gpu
+import os
 
 
 # 循环神经网络的简洁实现
@@ -47,15 +37,58 @@ class RNNModel(nn.Module):
     def begin_state(self, device, batch_size=1):
         if not isinstance(self.rnn, nn.LSTM):
             # nn.GRU以张量作为隐状态
-            return  torch.zeros((self.num_directions * self.rnn.num_layers,
-                                 batch_size, self.num_hiddens), 
-                                device=device)
+            zero_y = torch.zeros((self.num_directions * self.rnn.num_layers,
+                                  batch_size, self.num_hiddens
+                                 ), device=device)
+            return zero_y
         else:
             # nn.LSTM以元组作为隐状态
-            return (torch.zeros((
-                self.num_directions * self.rnn.num_layers,
-                batch_size, self.num_hiddens), device=device),
-                    torch.zeros((
-                        self.num_directions * self.rnn.num_layers,
-                        batch_size, self.num_hiddens), device=device))
+            zery_y = (torch.zeros((self.num_directions * self.rnn.num_layers,
+                                   batch_size, self.num_hiddens
+                                   ), device=device),
+                      torch.zeros((self.num_directions * self.rnn.num_layers,
+                                   batch_size, self.num_hiddens), 
+                                   device=device))
+            return zery_y
 
+
+# 返回RNN神经网络
+def get_RNNModel():
+    from d2lzh_pytorch.nlp.load_data.load_time_machine import load_data_time_machine
+
+    batch_size = 32
+    num_steps = 35
+    BASE_PATH = "/mnt/g1t/ai_data/Datasets_on_HHD/NLP/text_data"
+
+    # 加载
+    txtPath = os.path.join(BASE_PATH, "贾平凹-山本.txt")
+    stopwords_file = os.path.join(BASE_PATH, "stopwords.txt")
+
+    # 返回封装的数据
+    train_iter, vocab = load_data_time_machine(batch_size, num_steps, 
+                                               txtPath, stopwords_file)
+
+    device = try_gpu()
+
+    num_hiddens = 256
+
+    # RNN层
+    rnn_layer = nn.RNN(len(vocab), num_hiddens)
+
+    # RNN模型
+    net = RNNModel(rnn_layer, vocab_size=len(vocab))
+    return net
+
+
+def test_1():
+    
+    pass
+
+
+def main():
+    pass
+
+
+if __name__ == "__main__":
+    main()
+    pass

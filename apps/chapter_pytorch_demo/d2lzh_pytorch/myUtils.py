@@ -92,6 +92,11 @@ class Accumulator:
         return self.data[idx]
 
 
+def get_device():
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    return device
+
+
 def try_gpu(i=0):
     """Return gpu(i) if exists, otherwise return cpu().
 

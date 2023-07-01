@@ -6,6 +6,7 @@ import re
 import os
 import random
 import torch
+import jieba
 
 
 # 字数统计, 返回字典 ({'词': '频率'}) 形式数据
@@ -23,19 +24,22 @@ def count_corpus(tokens):
 
 
 """
-词元的类型是字符串，而模型需要的输入是数字，因此这种类型不方便模型使用。 现在，让我们[构建一个字典，通常也叫做词表（vocabulary），
- 用来将字符串类型的词元映射到从0开始的数字索引中]。 我们先将训练集中的所有文档合并在一起，对它们的唯一词元进行统计， 得到的统计结
- 果称之为语料（corpus）。 然后根据每个唯一词元的出现频率，为其分配一个数字索引。 很少出现的词元通常被移除，这可以降低复杂性。
- 另外，语料库中不存在或已删除的任何词元都将映射到一个特定的未知词元“<unk>”。 我们可以选择增加一个列表，用于保存那些被保留的词元，
- 例如：填充词元（“<pad>”）； 序列开始词元（“<bos>”）； 序列结束词元（“<eos>”）。
+
 """
-
-
 class Vocab:
     """Vocabulary for text.
     名 称: 词汇表
     定 义: 8.2节 文本预处理封装此类  sec_text_preprocessing
     作 用: 将字符串映射到从0开始的数字索引中.
+    介 绍: 词元的类型是字符串，而模型需要的输入是数字，因此这种类型不方便模型使用。 
+           现在，让我们[构建一个字典，通常也叫做词表（vocabulary），用来将字符串
+           类型的词元映射到从0开始的数字索引中]。 我们先将训练集中的所有文档合并
+           在一起，对它们的唯一词元进行统计， 得到的统计结果称之为语料（corpus）。
+           然后根据每个唯一词元的出现频率，为其分配一个数字索引。 很少出现的词元
+           通常被移除，这可以降低复杂性。另外，语料库中不存在或已删除的任何词元都
+           将映射到一个特定的未知词元“<unk>”。 我们可以选择增加一个列表，用于保存
+           那些被保留的词元，例如：填充词元（“<pad>”）； 序列开始词元（“<bos>”）； 
+           序列结束词元（“<eos>”）。
     调 用:
         vocab = Vocab(tokens)
         list(vocab.token_to_idx.items())[0:10]
@@ -48,10 +52,13 @@ class Vocab:
             reserved_tokens = []
         # 按出现频率排序
         counter = count_corpus(tokens)  # 字数统计, 返回字典 ({}, {}) 形式数据
-        self._token_freqs = sorted(counter.items(), key=lambda x: x[1], reverse=True)  # 按照频率排序
+        # 按照频率排序
+        self._token_freqs = sorted(counter.items(), key=lambda x: x[1], reverse=True)  
+
         # 未知 unknown 词元在0首位
         self.idx_to_token = ['<unk>'] + reserved_tokens
-        self.token_to_idx = {token: idx for idx, token in enumerate(self.idx_to_token)}  # 初始化
+        # 初始化
+        self.token_to_idx = {token: idx for idx, token in enumerate(self.idx_to_token)}  
 
         # 遍历字典
         for token, freq in self._token_freqs:
@@ -60,8 +67,10 @@ class Vocab:
                 break
             # 如果当前词还没遍历过
             if token not in self.token_to_idx:
-                self.idx_to_token.append(token)  # 添加到 idx_to_token ['<unk>', 'he', 'is', 'pirate']
-                self.token_to_idx[token] = len(self.idx_to_token) - 1  # 添加到 token_to_idx['1025', '999', '68', '12']
+                # 添加到 idx_to_token ['<unk>', 'he', 'is', 'pirate']
+                self.idx_to_token.append(token)  
+                 # 添加到 token_to_idx['1025', '999', '68', '12']
+                self.token_to_idx[token] = len(self.idx_to_token) - 1 
 
     def __len__(self):
         return len(self.idx_to_token)
@@ -99,9 +108,25 @@ def read_time_machine():
     return res
 
 
-#
-def read_txt(txtPath=None,
-             stopwords_file=None):
+def tokenize(lines, token='word'):
+    """Split text lines into word or character tokens.
+    标 题: 词元化
+    定 义: 8.2 文本预处理
+    功 能: 将文本行拆分为单词或字符元
+    详细描述:下面的`tokenize`函数将文本行列表（`lines`）作为输入，
+             列表中的每个元素是一个文本序列（如一条文本行）。
+             [**每个文本序列又被拆分成一个词元列表**]，*词元*（token）是文本的基本单位。
+             最后，返回一个由词元列表组成的列表，其中的每个词元都是一个字符串（string）。
+    """
+    if token == 'word':
+        return [line.split() for line in lines]
+    elif token == 'char':
+        return [list(line) for line in lines]
+    else:
+        print('ERROR: unknown token type: ' + token)
+
+
+def read_txt(txtPath=None, stopwords_file=None):
     """
     定 义: 8.2 文本预处理
     描 述: 自定义汉字文本加载, 将时间机器数据集加载到文本行的列表中
@@ -118,7 +143,6 @@ def read_txt(txtPath=None,
     with open(stopwords_file, "r", encoding='utf8') as words:
         stopwords = [i.strip() for i in words]
 
-    import jieba
     stopwords.extend(['n', '.', '（', '）', '-', '——', '(', ')', ' ', '，'])
     textList = jieba.lcut(str(lines))
     # q_cut_str = " ".join(textList)
@@ -127,30 +151,10 @@ def read_txt(txtPath=None,
     return q_cut_list
 
 
-def tokenize(lines, token='word'):
-    """Split text lines into word or character tokens.
-    Defined in `sec_text_preprocessing`
-
-    标 题: 词元化
-    定 义: 8.2 文本预处理
-    功 能: 将文本行拆分为单词或字符元
-
-    """
-    if token == 'word':
-        return [line.split() for line in lines]
-    elif token == 'char':
-        return [list(line) for line in lines]
-    else:
-        print('ERROR: unknown token type: ' + token)
-
-
 def load_corpus_time_machine(max_tokens=-1, txtPath="", stopwords_file=""):
-    """Return token indices and the vocabulary of the time machine dataset.
-    Defined in `sec_text_preprocessing`
-
+    """
     定 义: 8.2 文本预处理
-    功能: 返回时光机器数据集的词元索引列表和词表
-
+    功 能: 返回时光机器数据集的词元索引列表和词表
     """
     # 文本预处理
     lines = read_txt(txtPath=txtPath, stopwords_file=stopwords_file)
@@ -252,13 +256,7 @@ class SeqDataLoader:
 def load_data_time_machine(batch_size, num_steps, txtPath="", stopwords_file="",
                            use_random_iter=False, max_tokens=10000):
     """
-    返回时光机器数据集的迭代器和词表
-    使 用:
-        batch_size = 32
-        num_steps = 35
-        txtPath = "贾平凹-山本.txt"
-        stopwords_file = "stopwords.txt"
-        train_iter, vocab = load_data_time_machine(batch_size, num_steps, txtPath, stopwords_file)
+    返回关于文本数据集的迭代器和词表
     """
     # 封装代码块: 加载序列数据的迭代器
     data_iter = SeqDataLoader(batch_size,

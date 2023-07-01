@@ -53,8 +53,7 @@ def train_bert(train_iter, net, loss, vocab_size, devices, num_steps):
     timer = myUtils.Timer()
     while step < num_steps and not num_steps_reached:
         
-        for tokens_X, segments_X, valid_lens_x, \
-             pred_positions_X, mlm_weights_X, mlm_Y, nsp_y in train_iter:
+        for tokens_X, segments_X, valid_lens_x, pred_positions_X, mlm_weights_X, mlm_Y, nsp_y in train_iter:
             tokens_X = tokens_X.to(devices[0])
             segments_X = segments_X.to(devices[0])
             valid_lens_x = valid_lens_x.to(devices[0])

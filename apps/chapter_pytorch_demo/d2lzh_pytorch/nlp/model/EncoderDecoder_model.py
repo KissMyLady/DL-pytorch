@@ -1,18 +1,8 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/4/23 8:05
-import sys
-sys.path.append(".")
-sys.path.append("../..")
-
 import torch
 from torch import nn
-import math
-import collections
-
-
-from d2lzh_pytorch import myUtils
-
 
 
 class Encoder(nn.Module):
@@ -122,11 +112,6 @@ def get_EncoderDecoder_model():
     返回一个 EncoderDecoder 模型
     """
     from d2lzh_pytorch.nlp.load_data.load_nmt_data import load_data_nmt
-    
-    embed_size = 32
-    num_hiddens = 32
-    num_layers = 2
-    dropout = 0.1
 
     batch_size = 64
     num_steps = 10
@@ -134,16 +119,18 @@ def get_EncoderDecoder_model():
     # 数据加载
     train_iter, src_vocab, tgt_vocab = load_data_nmt(batch_size, num_steps)
 
+    # 模型超参
+    embed_size = 32
+    num_hiddens = 32
+    num_layers = 2
+    dropout = 0.1
+
     # 编码器-解码器
     encoder = Seq2SeqEncoder(len(src_vocab), embed_size, num_hiddens, num_layers, dropout)
     decoder = Seq2SeqDecoder(len(tgt_vocab), embed_size, num_hiddens, num_layers, dropout)
 
     net = EncoderDecoder(encoder, decoder)
     return net
-
-
-def test_1():
-    pass
 
 
 def main():

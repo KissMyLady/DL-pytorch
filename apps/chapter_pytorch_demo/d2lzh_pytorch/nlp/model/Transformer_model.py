@@ -175,9 +175,11 @@ class DecoderBlock(nn.Module):
                  dropout, i, **kwargs):
         super(DecoderBlock, self).__init__(**kwargs)
         self.i = i
-        self.attention1 = MultiHeadAttention(key_size, query_size, value_size, num_hiddens, num_heads, dropout)
+        self.attention1 = MultiHeadAttention(key_size, query_size, value_size, 
+                                             num_hiddens, num_heads, dropout)
         self.addnorm1 = AddNorm(norm_shape, dropout)
-        self.attention2 = MultiHeadAttention(key_size, query_size, value_size, num_hiddens, num_heads, dropout)
+        self.attention2 = MultiHeadAttention(key_size, query_size, value_size, 
+                                             num_hiddens, num_heads, dropout)
         self.addnorm2 = AddNorm(norm_shape, dropout)
         self.ffn = PositionWiseFFN(ffn_num_input, ffn_num_hiddens,num_hiddens)
         self.addnorm3 = AddNorm(norm_shape, dropout)

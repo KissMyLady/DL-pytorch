@@ -1,7 +1,3 @@
-import sys
-sys.path.append("..")
-sys.path.append("../..")
-
 import torch
 from torch import nn
 import math
@@ -137,9 +133,11 @@ class MultiHeadAttention(nn.Module):
 
 class EncoderBlock(nn.Module):
     """Transformer编码器块"""
-    def __init__(self, key_size, query_size, value_size, num_hiddens,
-                 norm_shape, ffn_num_input, ffn_num_hiddens, num_heads,
-                 dropout, use_bias=False, **kwargs):
+    def __init__(self, key_size, query_size, value_size, 
+                 num_hiddens, norm_shape, 
+                 ffn_num_input, ffn_num_hiddens, 
+                 num_heads, dropout, 
+                 use_bias=False, **kwargs):
         super(EncoderBlock, self).__init__(**kwargs)
         self.attention = MultiHeadAttention(key_size, query_size, value_size, 
                                             num_hiddens, num_heads, 
@@ -165,9 +163,12 @@ class BERTEncoder(nn.Module):
         self.segment_embedding = nn.Embedding(2, num_hiddens)
         self.blks = nn.Sequential()
         
+        # 多少个块
         for i in range(num_layers):
-            encoderBlock = EncoderBlock(key_size, query_size, value_size, num_hiddens, 
-                                        norm_shape, ffn_num_input, ffn_num_hiddens, num_heads, 
+            encoderBlock = EncoderBlock(key_size, query_size, value_size, 
+                                        num_hiddens, norm_shape, 
+                                        ffn_num_input, ffn_num_hiddens, 
+                                        num_heads, 
                                         dropout, True)
             self.blks.add_module(f"{i}", encoderBlock)
             
@@ -176,11 +177,12 @@ class BERTEncoder(nn.Module):
 
     def forward(self, tokens, segments, valid_lens):
         # 在以下代码段中，X的形状保持不变：（批量大小，最大序列长度，num_hiddens）
-        X = self.token_embedding(tokens) + self.segment_embedding(segments)
-        X = X + self.pos_embedding.data[:, :X.shape[1], :]
+        Y = self.token_embedding(tokens) + self.segment_embedding(segments)
+        Y = Y + self.pos_embedding.data[:, :Y.shape[1], :]
+        # 输入到块
         for blk in self.blks:
-            X = blk(X, valid_lens)
-        return X
+            Y = blk(Y, valid_lens)
+        return Y
 
 
 class MaskLM(nn.Module):
@@ -297,7 +299,6 @@ def get_BERT_model(len_vocab=20256):
                     hid_in_features=128,
                     mlm_in_features=128,
                     nsp_in_features=128)
-
     return net
 
 
