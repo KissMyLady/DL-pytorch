@@ -5,8 +5,8 @@ from d2lzh_pytorch.utils import train_ch5
 from d2lzh_pytorch.utils import FlattenLayer
 import d2lzh_pytorch.torch as d2l
 from chapter import d2lzh_pytorch as d2l
-from torch import nn, optim
-import torch
+from torch_package import nn, optim
+import torch_package
 import time
 
 import sys

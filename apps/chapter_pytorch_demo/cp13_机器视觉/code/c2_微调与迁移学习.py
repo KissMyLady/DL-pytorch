@@ -3,7 +3,7 @@
 # Datetime:2023/3/21 10:13
 import torch
 from torch import nn, optim
-from torch.utils.data import Dataset, DataLoader
+from torch_package.utils.data import Dataset, DataLoader
 import torchvision
 from torchvision.datasets import ImageFolder
 from torchvision import transforms

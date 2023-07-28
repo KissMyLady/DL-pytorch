@@ -2,9 +2,9 @@ import sys
 sys.path.append("../..")
 import d2lzh_pytorch.torch as d2l
 
-import torch
+import torch_package
 import math
-from torch import nn
+from torch_package import nn
 
 
 def grad_clipping(net, theta):

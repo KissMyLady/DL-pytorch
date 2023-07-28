@@ -30,6 +30,7 @@ def masked_softmax(X, valid_lens):
 
 class DotProductAttention(nn.Module):
     """缩放点积注意力"""
+
     def __init__(self, dropout, **kwargs):
         super(DotProductAttention, self).__init__(**kwargs)
         self.dropout = nn.Dropout(dropout)
@@ -41,7 +42,7 @@ class DotProductAttention(nn.Module):
     def forward(self, queries, keys, values, valid_lens=None):
         d = queries.shape[-1]
         # 设置transpose_b=True为了交换keys的最后两个维度
-        scores = torch.bmm(queries, keys.transpose(1,2)) / math.sqrt(d)
+        scores = torch.bmm(queries, keys.transpose(1, 2)) / math.sqrt(d)
         self.attention_weights = masked_softmax(scores, valid_lens)
         return torch.bmm(self.dropout(self.attention_weights), values)
 
@@ -71,6 +72,7 @@ def transpose_output(X, num_heads):
 
 class AddNorm(nn.Module):
     """残差连接后进行层规范化"""
+
     def __init__(self, normalized_shape, dropout, **kwargs):
         super(AddNorm, self).__init__(**kwargs)
         self.dropout = nn.Dropout(dropout)
@@ -82,6 +84,7 @@ class AddNorm(nn.Module):
 
 class PositionWiseFFN(nn.Module):
     """基于位置的前馈网络"""
+
     def __init__(self, ffn_num_input, ffn_num_hiddens, ffn_num_outputs, **kwargs):
         super(PositionWiseFFN, self).__init__(**kwargs)
         self.dense1 = nn.Linear(ffn_num_input, ffn_num_hiddens)
@@ -94,6 +97,7 @@ class PositionWiseFFN(nn.Module):
 
 class MultiHeadAttention(nn.Module):
     """多头注意力"""
+
     def __init__(self, key_size, query_size, value_size, num_hiddens,
                  num_heads, dropout, bias=False, **kwargs):
         super(MultiHeadAttention, self).__init__(**kwargs)
@@ -133,14 +137,15 @@ class MultiHeadAttention(nn.Module):
 
 class EncoderBlock(nn.Module):
     """Transformer编码器块"""
-    def __init__(self, key_size, query_size, value_size, 
-                 num_hiddens, norm_shape, 
-                 ffn_num_input, ffn_num_hiddens, 
-                 num_heads, dropout, 
+
+    def __init__(self, key_size, query_size, value_size,
+                 num_hiddens, norm_shape,
+                 ffn_num_input, ffn_num_hiddens,
+                 num_heads, dropout,
                  use_bias=False, **kwargs):
         super(EncoderBlock, self).__init__(**kwargs)
-        self.attention = MultiHeadAttention(key_size, query_size, value_size, 
-                                            num_hiddens, num_heads, 
+        self.attention = MultiHeadAttention(key_size, query_size, value_size,
+                                            num_hiddens, num_heads,
                                             dropout, use_bias)
         self.addnorm1 = AddNorm(norm_shape, dropout)
         self.ffn = PositionWiseFFN(ffn_num_input, ffn_num_hiddens, num_hiddens)
@@ -153,7 +158,7 @@ class EncoderBlock(nn.Module):
 
 # BERT编码器
 class BERTEncoder(nn.Module):
-    
+
     def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,
                  ffn_num_hiddens, num_heads, num_layers, dropout,
                  max_len=1000, key_size=768, query_size=768, value_size=768,
@@ -162,16 +167,16 @@ class BERTEncoder(nn.Module):
         self.token_embedding = nn.Embedding(vocab_size, num_hiddens)
         self.segment_embedding = nn.Embedding(2, num_hiddens)
         self.blks = nn.Sequential()
-        
+
         # 多少个块
         for i in range(num_layers):
-            encoderBlock = EncoderBlock(key_size, query_size, value_size, 
-                                        num_hiddens, norm_shape, 
-                                        ffn_num_input, ffn_num_hiddens, 
-                                        num_heads, 
+            encoderBlock = EncoderBlock(key_size, query_size, value_size,
+                                        num_hiddens, norm_shape,
+                                        ffn_num_input, ffn_num_hiddens,
+                                        num_heads,
                                         dropout, True)
             self.blks.add_module(f"{i}", encoderBlock)
-            
+
         # 在BERT中，位置嵌入是可学习的，因此我们创建一个足够长的位置嵌入参数
         self.pos_embedding = nn.Parameter(torch.randn(1, max_len, num_hiddens))
 
@@ -187,8 +192,10 @@ class BERTEncoder(nn.Module):
 
 class MaskLM(nn.Module):
     """BERT的掩蔽语言模型任务"""
+
     def __init__(self, vocab_size, num_hiddens, num_inputs=768, **kwargs):
         super(MaskLM, self).__init__(**kwargs)
+        # 单隐藏层的mlp
         self.mlp = nn.Sequential(nn.Linear(num_inputs, num_hiddens),
                                  nn.ReLU(),
                                  nn.LayerNorm(num_hiddens),
@@ -213,6 +220,7 @@ class NextSentencePred(nn.Module):
     BERT的下一个句子预测任务
     The next sentence prediction task of BERT.
     """
+
     def __init__(self, num_inputs, **kwargs):
         super(NextSentencePred, self).__init__(**kwargs)
         self.output = nn.Linear(num_inputs, 2)
@@ -224,29 +232,30 @@ class NextSentencePred(nn.Module):
 
 class BERTModel(nn.Module):
     """BERT模型"""
-    def __init__(self, vocab_size, 
-                 num_hiddens,  norm_shape, 
-                 ffn_num_input, ffn_num_hiddens, 
-                 num_heads, num_layers, 
+
+    def __init__(self, vocab_size,
+                 num_hiddens, norm_shape,
+                 ffn_num_input, ffn_num_hiddens,
+                 num_heads, num_layers,
                  dropout,
-                 max_len=1000, 
+                 max_len=1000,
                  key_size=768, query_size=768, value_size=768,
-                 hid_in_features=768, 
+                 hid_in_features=768,
                  mlm_in_features=768,
                  nsp_in_features=768):
         super(BERTModel, self).__init__()
-        
+
         # encoded_X
-        self.encoder = BERTEncoder(vocab_size, 
+        self.encoder = BERTEncoder(vocab_size,
                                    num_hiddens, norm_shape,
-                                   ffn_num_input, ffn_num_hiddens, 
+                                   ffn_num_input, ffn_num_hiddens,
                                    num_heads, num_layers,
-                                   dropout, 
-                                   max_len=max_len, 
+                                   dropout,
+                                   max_len=max_len,
                                    key_size=key_size,
                                    query_size=query_size,
                                    value_size=value_size)
-        
+
         self.hidden = nn.Sequential(nn.Linear(hid_in_features, num_hiddens),
                                     nn.Tanh())
         self.mlm = MaskLM(vocab_size, num_hiddens, mlm_in_features)  # mlm_Y_hat
@@ -264,7 +273,7 @@ class BERTModel(nn.Module):
 
 
 def get_BERT_model(len_vocab=20256):
-    #from d2lzh_pytorch.nlp.load_data.load_wiki import load_data_wiki
+    # from d2lzh_pytorch.nlp.load_data.load_wiki import load_data_wiki
 
     # batch_size = 512
     # max_len = 64
@@ -303,10 +312,13 @@ def get_BERT_model(len_vocab=20256):
 
 
 def test_1():
+    net = get_BERT_model()
+    print(net)
     pass
 
 
 def main():
+    test_1()
     pass
 
 

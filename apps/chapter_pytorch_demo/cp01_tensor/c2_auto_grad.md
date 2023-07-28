@@ -12,12 +12,10 @@
 
 `Function`是另外一个很重要的类。`Tensor`和`Function`互相结合就可以构建一个记录有整个计算过程的有向无环图（DAG）。每个`Tensor`都有一个`.grad_fn`属性，该属性即创建该`Tensor`的`Function`, 就是说该`Tensor`是不是通过某些运算得到的，若是，则`grad_fn`返回一个与这些运算相关的对象，否则是None。
 
-下面通过一些例子来理解这些概念。  
-
-
+下面通过一些例子来理解这些概念。
 
 ```python
-import torch
+import torch_package
 ```
 
 

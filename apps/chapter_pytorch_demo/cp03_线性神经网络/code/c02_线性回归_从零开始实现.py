@@ -1,6 +1,6 @@
 # %matplotlib inline
 import random
-import torch
+import torch_package
 
 
 import sys

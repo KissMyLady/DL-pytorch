@@ -1,22 +1,20 @@
 ```python
-import torch
-
+import torch_package
 
 x = torch.tensor([1, 2])
 y = torch.tensor([2, 3])
 
-
 if torch.cuda.is_available():
     print("只有在PyTorch GPU版本上才会执行 >> ")
-    
-    device = torch.device("cuda")          # GPU
+
+    device = torch.device("cuda")  # GPU
     y = torch.ones_like(x, device=device)  # 直接创建一个在GPU上的Tensor
-    x = x.to(device)                       # 等价于 .to("cuda")
+    x = x.to(device)  # 等价于 .to("cuda")
     print("x: ", x)
     z = x + y
 
     print(z)
-    print(z.to("cpu", torch.double))       # to()还可以同时更改数据类型
+    print(z.to("cpu", torch.double))  # to()还可以同时更改数据类型
 ```
 
     只有在PyTorch GPU版本上才会执行 >> 

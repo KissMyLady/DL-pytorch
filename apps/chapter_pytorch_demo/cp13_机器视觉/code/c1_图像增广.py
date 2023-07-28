@@ -2,8 +2,8 @@
 # Author:mylady
 # Datetime:2023/3/21 8:42
 import time
-import torch
-from torch.utils.data import DataLoader
+import torch_package
+from torch_package.utils.data import DataLoader
 import torchvision
 
 import sys

@@ -1,7 +1,7 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/4/9 9:07
-import torch
+import torch_package
 from datasets import load_dataset
 from transformers import BertTokenizer
 from transformers import BertModel

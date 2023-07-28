@@ -1,7 +1,7 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/4/7 14:33
-import torch
+import torch_package
 import random
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

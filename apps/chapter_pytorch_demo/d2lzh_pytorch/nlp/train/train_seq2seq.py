@@ -9,7 +9,22 @@ import collections
 
 from d2lzh_pytorch import myUtils
 from d2lzh_pytorch import myPolt
-from d2lzh_pytorch.rnn_train_chinese import grad_clipping
+
+
+def grad_clipping(net, theta):
+    """
+    Clip the gradient.
+    Defined in :numref:`sec_rnn_scratch`
+    """
+    if isinstance(net, nn.Module):
+        params = [p for p in net.parameters() if p.requires_grad]
+    else:
+        params = net.params
+    norm = torch.sqrt(sum(torch.sum((p.grad ** 2)) for p in params))
+    if norm > theta:
+        for param in params:
+            param.grad[:] *= theta / norm
+    pass
 
 
 def sequence_mask(X, valid_len, value=0):
@@ -132,3 +147,6 @@ def test_1():
                   device)
     pass
 
+
+if __name__ == '__main__':
+    pass

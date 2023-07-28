@@ -1,7 +1,7 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/4/19 23:51
-import torch
+import torch_package
 # from d2l import torch as d2l
 
 import random

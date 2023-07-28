@@ -2,10 +2,10 @@
 # Author:mylady
 # Datetime:2023/6/28 13:35
 
-import torch
+import torch_package
 import os
-from torch import nn
-from torch.nn import functional as F
+from torch_package import nn
+from torch_package.nn import functional as F
 # from d2l import torch as d2l
 
 import sys

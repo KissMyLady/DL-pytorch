@@ -1,7 +1,7 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/3/20 14:28
-import torch
+import torch_package
 import random
 import zipfile
 

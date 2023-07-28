@@ -2,6 +2,7 @@
 
 说 明:
 - 当前项目为 [d2l-en](https://github.com/d2l-ai/d2l-en) 的学习笔记, 使用了pytorch框架
+- [d2l-zh项目地址](https://github.com/d2l-ai/d2l-zh) 中文版
 - 包含huggingFace的学习代码
 - 功 能: 
 - - 1, 中英文互相翻译

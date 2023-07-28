@@ -1,7 +1,7 @@
 # coding:utf-8
 # Author:mylady
 # Datetime:2023/4/23 5:21
-from torch import nn
+from torch_package import nn
 # from d2l import torch as d2l
 
 import sys

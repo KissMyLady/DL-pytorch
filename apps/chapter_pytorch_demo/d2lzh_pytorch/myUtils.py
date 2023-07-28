@@ -167,6 +167,27 @@ def download_extract(name, folder=None):
     return os.path.join(base_dir, folder) if folder else data_dir
 
 
+def save_net(net, net_name=""):
+    # 保存模型
+    net = net.to("cpu")
+
+    import datetime
+    import os
+    str_time = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+
+    # 重命名模型
+    if net_name is None or net_name == "":
+        save_path = 'netSave_on_disk_%s.pt' % str_time
+    else:
+        save_path = '%s_%s.pt' % (net_name, str_time)
+
+    torch.save(net, save_path)  # 全保存
+    print("训练完毕, 模型 %s 已保存至当前路径" % save_path)
+    print("模型大小是: %0.2f M" % (os.path.getsize(save_path) / 1024 / 1024))
+    pass
+
+
+
 def main():
     pass
 

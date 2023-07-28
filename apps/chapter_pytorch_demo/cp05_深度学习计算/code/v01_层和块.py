@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch.nn import functional as F
+from torch_package.nn import functional as F
 
 print(torch.__version__)
 

@@ -5,9 +5,9 @@ import collections
 import math
 import os
 import shutil
-import torch
+import torch_package
 import torchvision
-from torch import nn
+from torch_package import nn
 from torchvision import models
 
 from d2l import torch as d2l

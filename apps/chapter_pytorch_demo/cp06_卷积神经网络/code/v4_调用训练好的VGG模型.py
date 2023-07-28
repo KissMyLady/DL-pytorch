@@ -2,7 +2,7 @@
 import time
 import torch
 from torch import nn, optim
-import torch.nn.functional as F
+import torch_package.nn.functional as F
 
 import sys
 sys.path.append("../..")

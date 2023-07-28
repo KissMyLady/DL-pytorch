@@ -2,12 +2,12 @@ DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
 import numpy as np
-import torch
+import torch_package
 import torchvision
 from PIL import Image
-from torch import nn
-from torch.nn import functional as F
-from torch.utils import data
+from torch_package import nn
+from torch_package.nn import functional as F
+from torch_package.utils import data
 from torchvision import transforms
 
 nn_Module = nn.Module
@@ -38,12 +38,12 @@ from matplotlib_inline import backend_inline
 d2l = sys.modules[__name__]
 
 import numpy as np
-import torch
+import torch_package
 import torchvision
 from PIL import Image
-from torch import nn
-from torch.nn import functional as F
-from torch.utils import data
+from torch_package import nn
+from torch_package.nn import functional as F
+from torch_package.utils import data
 from torchvision import transforms
 
 def use_svg_display():
