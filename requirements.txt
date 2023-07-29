@@ -1,27 +1,23 @@
-# pip3 install torch torchvision torchaudio
+tqdm
+ipython
+matplotlib
+pandas
+jieba
+colorlog
+
+torchtext==1.5.1
+
+torch
+torchvision
+torchaudio
 
 ## 安装jupyter
-# pip install notebook
-# pip install jupyterlab
-# pip install jupyter_contrib_nbextensions
-# pip install jupyterthemes
-# pip install jupyterlab-language-pack-zh-CN
-
-# pip install colorlog
-
-## huggingface
-# pip install datasets
-# pip install transformers
-
 notebook
 jupyterlab
 jupyter_contrib_nbextensions
 jupyterthemes
 jupyterlab-language-pack-zh-CN
 
-# torch
-# torchvision
-# torchaudio
-# colorlog
-# datasets
-# transformers
+## 安装huggingface
+datasets
+transformers

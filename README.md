@@ -27,10 +27,10 @@ zh-d2l.ai书籍 在线阅读地址:
 ## conda环境安装
 ```sh
 # 创建
-$ conda create -n dl-pytorch python=3.8.10
+$ conda create -n dl_pytorch python=3.8.10
 
 # 激活
-$ conda activate dl-pytorch
+$ conda activate dl_pytorch
 
 # 退出
 $ conda deactivate
@@ -47,6 +47,12 @@ $ conda remove --name <env_name> --all
 jupyter notebook --config /home/mylady/.jupyter/jupyter_notebook_config.py
 
 nohup jupyter notebook --notebook-dir=[dir] --ip=0.0.0.0 --port=8888 --allow-root --no-browser --NotebookApp.password=sha1:xxxx &
+
+
+# on windows
+cd D:\code\python\DL-pytorch
+conda activate dl_pytorch
+jupyter-lab --config  C:\Users\Administrator.SY-202304151755\.jupyter\jupyter_lab_config.py
 ```
 
 ## OpnCV4.0 中文文档

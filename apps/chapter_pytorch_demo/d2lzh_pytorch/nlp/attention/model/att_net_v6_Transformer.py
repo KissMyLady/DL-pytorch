@@ -168,7 +168,10 @@ class PositionWiseFFN(nn.Module):
         self.dense2 = nn.Linear(ffn_num_hiddens, ffn_num_outputs)
 
     def forward(self, X):
-        return self.dense2(self.relu(self.dense1(X)))
+        y1 = self.dense1(X)
+        y2 = self.relu(y1)
+        y3 = self.dense2(y2)
+        return y3
 
 
 class DecoderBlock(nn.Module):
@@ -312,6 +315,8 @@ class TransformerDecoder(AttentionDecoder):
         self.num_hiddens = num_hiddens
         self.num_layers = num_layers
         self.embedding = nn.Embedding(vocab_size, num_hiddens)
+
+        # 位置编码
         self.pos_encoding = PositionalEncoding(num_hiddens, dropout)
         self.blks = nn.Sequential()
 
@@ -322,7 +327,6 @@ class TransformerDecoder(AttentionDecoder):
                              norm_shape, ffn_num_input, ffn_num_hiddens,
                              num_heads, dropout, i))
             pass
-
         self.dense = nn.Linear(num_hiddens, vocab_size)
 
     def init_state(self, enc_outputs, enc_valid_lens, *args):
@@ -360,6 +364,8 @@ class TransformerEncoder(Encoder):
                                  EncoderBlock(key_size, query_size, value_size, num_hiddens,
                                               norm_shape, ffn_num_input, ffn_num_hiddens,
                                               num_heads, dropout, use_bias))
+            pass
+        pass
 
     def forward(self, X, valid_lens, *args):
         # 因为位置编码值在-1和1之间，
@@ -435,6 +441,8 @@ def get_net():
 
 
 def main():
+    net = get_net()
+    print(net)
     pass
 
 

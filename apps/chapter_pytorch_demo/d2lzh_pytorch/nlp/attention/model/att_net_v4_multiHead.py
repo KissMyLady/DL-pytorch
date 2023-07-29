@@ -50,10 +50,10 @@ class DotProductAttention(nn.Module):
 
     def forward(self, queries, keys, values, valid_lens=None):
         d = queries.shape[-1]
+        # 计算得分
         scores = torch.bmm(queries, keys.transpose(1, 2)) / math.sqrt(d)
-
+        # 归一化(较常见)
         self.attention_weights = masked_softmax(scores, valid_lens)
-
         y_1 = self.dropout(self.attention_weights)
         y = torch.bmm(y_1, values)
         return y
@@ -84,9 +84,12 @@ class MultiHeadAttention(nn.Module):
         super(MultiHeadAttention, self).__init__(**kwargs)
         self.num_heads = num_heads
         self.attention = DotProductAttention(dropout)  # 缩放点积注意力
+
         self.W_q = nn.Linear(query_size, num_hiddens, bias=bias)
         self.W_k = nn.Linear(key_size, num_hiddens, bias=bias)
         self.W_v = nn.Linear(value_size, num_hiddens, bias=bias)
+
+        # 最后输出层
         self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
 
     def forward(self, queries, keys, values, valid_lens):
@@ -101,6 +104,7 @@ class MultiHeadAttention(nn.Module):
                                                  dim=0)
             pass
 
+        # 关联性
         output = self.attention(queries, keys, values, valid_lens)
         # 输出变换形状
         output_concat = transpose_output(output, self.num_heads)
