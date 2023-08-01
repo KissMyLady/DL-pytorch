@@ -68,7 +68,10 @@ def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab,
         pred = dec_X.squeeze(dim=0).type(torch.int32).item()
         # 保存注意力权重（稍后讨论）
         if save_attention_weights:
-            attention_weight_seq.append(net.decoder.attention_weights)
+            attention_weight_seq.append(
+                net.decoder.attention_weights
+            )
+
         # 一旦序列结束词元被预测，输出序列的生成就完成了
         if pred == tgt_vocab['<eos>']:
             break

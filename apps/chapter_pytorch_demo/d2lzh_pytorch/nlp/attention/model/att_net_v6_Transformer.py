@@ -25,7 +25,6 @@ def masked_softmax(X, valid_lens):
     """
     10章节: 注意力机制, 3.注意力评分函数, 掩蔽softmax操作
     """
-    # `X`: 3D tensor, `valid_lens`: 1D or 2D tensor
     if valid_lens is None:
         return nn.functional.softmax(X, dim=-1)
     else:
@@ -34,8 +33,6 @@ def masked_softmax(X, valid_lens):
             valid_lens = torch.repeat_interleave(valid_lens, shape[1])
         else:
             valid_lens = valid_lens.reshape(-1)
-        # On the last axis, replace masked elements with a very large negative
-        # value, whose exponentiation outputs 0
         X = sequence_mask(X.reshape(-1,
                                     shape[-1]),
                           valid_lens,
@@ -49,11 +46,6 @@ class DotProductAttention(nn.Module):
         super(DotProductAttention, self).__init__(**kwargs)
         self.dropout = nn.Dropout(dropout)
 
-    # Shape of `queries`: (`batch_size`, no. of queries, `d`)
-    # Shape of `keys`: (`batch_size`, no. of key-value pairs, `d`)
-    # Shape of `values`: (`batch_size`, no. of key-value pairs, value
-    # dimension)
-    # Shape of `valid_lens`: (`batch_size`,) or (`batch_size`, no. of queries)
     def forward(self, queries, keys, values, valid_lens=None):
         d = queries.shape[-1]
         # Set `transpose_b=True` to swap the last two dimensions of `keys`
@@ -68,21 +60,8 @@ def transpose_qkv(X, num_heads):
     Transposition for parallel computation of multiple attention heads.
     用于多个注意力头的并行计算的换位。
     """
-    # Shape of input `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`).
-    # Shape of output `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_heads`,
-    # `num_hiddens` / `num_heads`)
     X = X.reshape(X.shape[0], X.shape[1], num_heads, -1)
-
-    # Shape of output `X`:
-    # (`batch_size`, `num_heads`, no. of queries or key-value pairs,
-    # `num_hiddens` / `num_heads`)
     X = X.permute(0, 2, 1, 3)
-
-    # Shape of `output`:
-    # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
-    # `num_hiddens` / `num_heads`)
     return X.reshape(-1, X.shape[2], X.shape[3])
 
 
@@ -111,29 +90,15 @@ class MultiHeadAttention(nn.Module):
         self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
 
     def forward(self, queries, keys, values, valid_lens):
-        # Shape of `queries`, `keys`, or `values`:
-        # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`)
-        # Shape of `valid_lens`:
-        # (`batch_size`,) or (`batch_size`, no. of queries)
-        # After transposing, shape of output `queries`, `keys`, or `values`:
-        # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
-        # `num_hiddens` / `num_heads`)
         queries = transpose_qkv(self.W_q(queries), self.num_heads)
         keys = transpose_qkv(self.W_k(keys), self.num_heads)
         values = transpose_qkv(self.W_v(values), self.num_heads)
 
         if valid_lens is not None:
-            # On axis 0, copy the first item (scalar or vector) for
-            # `num_heads` times, then copy the next item, and so on
             valid_lens = torch.repeat_interleave(
                 valid_lens, repeats=self.num_heads, dim=0)
 
-        # Shape of `output`: (`batch_size` * `num_heads`, no. of queries,
-        # `num_hiddens` / `num_heads`)
         output = self.attention(queries, keys, values, valid_lens)
-
-        # Shape of `output_concat`:
-        # (`batch_size`, no. of queries, `num_hiddens`)
         output_concat = transpose_output(output, self.num_heads)
         return self.W_o(output_concat)
 
@@ -151,7 +116,10 @@ class AddNorm(nn.Module):
         self.ln = nn.LayerNorm(normalized_shape)
 
     def forward(self, X, Y):
-        return self.ln(self.dropout(Y) + X)
+        y_1 = self.dropout(Y)
+        y_2 = y_1 + X
+        y_3 = self.ln(y_2 + X)
+        return y_3
 
 
 class PositionWiseFFN(nn.Module):
@@ -422,8 +390,8 @@ def get_net():
     src_vocab = [i for i in range(184)]
     tgt_vocab = [i for i in range(201)]
 
-    print("src_vocab 长度为: ", len(src_vocab))  # 184
-    print("tgt_vocab 长度为: ", len(tgt_vocab))  # 201
+    # print("src_vocab 长度为: ", len(src_vocab))  # 184
+    # print("tgt_vocab 长度为: ", len(tgt_vocab))  # 201
 
     # 编码
     encoder = TransformerEncoder(len(src_vocab), key_size, query_size, value_size,
