@@ -27,10 +27,10 @@ zh-d2l.ai书籍 在线阅读地址:
 ## conda环境安装
 ```sh
 # 创建
-$ conda create -n dl_pytorch python=3.8.10
+$ conda create -n d2l_pytorch python=3.10.*
 
 # 激活
-$ conda activate dl_pytorch
+$ conda activate d2l_pytorch
 
 # 退出
 $ conda deactivate
