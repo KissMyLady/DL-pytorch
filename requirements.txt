@@ -1,15 +1,21 @@
 tqdm
-ipython
-matplotlib
-pandas
+# ipython
+# matplotlib
+# pandas
 jieba
 colorlog
 
-torchtext==1.5.1
+# torchtext==1.5.1
+# scikit-learn
 
+
+# 原始学习版本
+# pip install torch==1.12.0
 torch
 torchvision
 torchaudio
+torchtext
+
 
 ## 安装jupyter
 notebook
@@ -21,3 +27,5 @@ jupyterlab-language-pack-zh-CN
 ## 安装huggingface
 datasets
 transformers
+
+torch-summary
