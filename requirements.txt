@@ -1,11 +1,15 @@
 tqdm
-ipython
-matplotlib
-pandas
+# matplotlib
 jieba
 colorlog
 
-torchtext==1.5.1
+# torchtext==1.5.1
+# pip install torchtext==0.15.2
+
+# GPU版本
+# torch-2.0.1+cu118-cp310-cp310-win_amd64.whl
+# torchvision-0.15.2+cu118-cp310-cp310-win_amd64.whl
+# torchtext==0.15.2
 
 torch
 torchvision
