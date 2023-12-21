@@ -18,7 +18,11 @@ def get_dataloader_workers():
 
 # ~/Datasets/FashionMNIST
 # /mnt/g1t/ai_data/Datasets_on_HHD
-def load_data_fashion_mnist(batch_size, resize=None, root='/mnt/g1t/ai_data/Datasets_on_HHD'):
+def load_data_fashion_mnist(batch_size,
+                            resize=None,
+                            root='/home/mylady/ai_data/d2l_data',
+                            download=False
+                            ):
     """
         Download the Fashion-MNIST dataset and then load it into memory.
     """
@@ -35,11 +39,11 @@ def load_data_fashion_mnist(batch_size, resize=None, root='/mnt/g1t/ai_data/Data
     mnist_train = torchvision.datasets.FashionMNIST(root=root, 
                                                     train=True, 
                                                     transform=trans, 
-                                                    download=False)
+                                                    download=download)
     mnist_test = torchvision.datasets.FashionMNIST(root=root,
                                                     train=False,
                                                     transform=trans, 
-                                                    download=False)
+                                                    download=download)
     # 返回数据
     res_1 = DataLoader(mnist_train, 
                        batch_size, 

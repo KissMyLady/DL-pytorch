@@ -240,22 +240,24 @@ def get_dataloader_workers():
 
 # ~/Datasets/FashionMNIST
 # /mnt/g1t/ai_data/Datasets_on_HHD
-def load_data_fashion_mnist(batch_size, resize=None, root='/mnt/g1t/ai_data/Datasets_on_HHD'):
+def load_data_fashion_mnist(batch_size, resize=None, root='/home/mylady/ai_data/d2l_data/FashionMNIST'):
     """Download the Fashion-MNIST dataset and then load it into memory.
     Defined in `sec_fashion_mnist`
     """
+    
     trans = [transforms.ToTensor()]
     if resize:
         trans.insert(0, transforms.Resize(resize))
+
     trans = transforms.Compose(trans)
     mnist_train = torchvision.datasets.FashionMNIST(root=root, 
                                                     train=True, 
                                                     transform=trans, 
-                                                    download=False)
+                                                    download=True)
     mnist_test = torchvision.datasets.FashionMNIST(root=root,
                                                     train=False,
                                                     transform=trans, 
-                                                    download=False)
+                                                    download=True)
     res_1 = data.DataLoader(mnist_train, 
                             batch_size, 
                             shuffle=True,

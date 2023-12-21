@@ -44,25 +44,7 @@ $ conda remove --name <env_name> --all
 
 - 启动jupyter命令
 ```shell
-
-生成配置文件
-jupyter notebook password
-
-jupyter notebook --generate-config    
-
-# 修改配置文件
-c.ServerApp.allow_remote_access = False
-c.ServerApp.ip = '0.0.0.0'
-c.ServerApp.open_browser = False
-c.ServerApp.password = '111111'
-c.ServerApp.port = 8888
-
-
-# 直接运行
 jupyter notebook --config /home/mylady/.jupyter/jupyter_notebook_config.py
-
-# 后台运行
-nohup  jupyter notebook --config /home/mylady/.jupyter/jupyter_notebook_config.py &
 
 nohup jupyter notebook --notebook-dir=[dir] --ip=0.0.0.0 --port=8888 --allow-root --no-browser --NotebookApp.password=sha1:xxxx &
 
@@ -78,4 +60,3 @@ jupyter-lab --config  C:\Users\Administrator.SY-202304151755\.jupyter\jupyter_la
 在线阅读
 - [OpenCV 4.0 中文文档](https://opencv.apachecn.org/#/)
 - [Opencv-doc-zh](https://github.com/apachecn/opencv-doc-zh)
-
