@@ -1,11 +1,12 @@
 # %matplotlib inline
-import random
-import torch_package
-
 
 import sys
 sys.path.append("../..")
-import d2lzh_pytorch.torch as d2l
+import d2lzh_pytorch.torch_package as d2l
+
+
+import torch
+import random
 
 
 def synthetic_data(w, b, num_examples):  #@save

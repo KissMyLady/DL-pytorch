@@ -37,7 +37,9 @@ def load_cifar10(is_train, augs, batch_size):
     """
     CIFAR-10数据集包含60,000张32x32彩色图像，分为10个类，每类6,000张。有50,000张训练图片和10,000张测试图片。
     """
-    dataset = torchvision.datasets.CIFAR10(root="/mnt/aiguo/ai_data/Datasets_on_HHD/CIFAR", 
+    # root = "/mnt/aiguo/ai_data/Datasets_on_HHD/CIFAR
+    root = "~//home/mylady/Datasets/CIFAR"
+    dataset = torchvision.datasets.CIFAR10(root=root, 
                                            train=is_train,
                                            transform=augs, 
                                            download=False)
