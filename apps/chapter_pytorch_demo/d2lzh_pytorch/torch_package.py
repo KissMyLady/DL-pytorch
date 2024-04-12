@@ -436,11 +436,34 @@ def evaluate_loss(net, data_iter, loss):
 DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
+
+import platform
+
+
+def isLinux() -> bool:
+    name = platform.system()
+    # print("当前操作系统是: ", name)
+    if name == "Windows":
+        return False
+    if name == "Linux":
+        return True
+    return False
+    
+
 # def download(name, cache_dir=os.path.join('..', 'data')):
-def download(name, cache_dir=os.path.join('/mnt/g1t/ai_data/Datasets_on_HHD', 'data')):
+def download(name, cache_dir=None):
     """Download a file inserted into DATA_HUB, return the local filename.
 
     Defined in :numref:`sec_kaggle_house`"""
+
+    if cache_dir is None:
+        # 判断平台
+        if isLinux() is True:
+            cache_dir=os.path.join('/mnt/g1t/ai_data/Datasets_on_HHD', 'data')
+        else:
+            cache_dir=os.path.join(r'X:\big_ai_files\d2l_data', 'data')
+    print("download函数将使用 %s 作为缓存地址" % cache_dir)
+    
     assert name in DATA_HUB, f"{name} does not exist in {DATA_HUB}."
     url, sha1_hash = DATA_HUB[name]
     os.makedirs(cache_dir, exist_ok=True)
@@ -1022,8 +1045,18 @@ def read_data_nmt():
 
     Defined in :numref:`sec_machine_translation`"""
     data_dir = d2l.download_extract('fra-eng')
-    with open(os.path.join(data_dir, 'fra.txt'), 'r') as f:
-        return f.read()
+    file_path = os.path.join(data_dir, 'fra.txt')
+    print("下载训练数据集file_path: ", file_path)
+
+    with open(file_path, 'r', encoding="utf-8") as f:
+        try:
+            res = f.read()
+            return res
+        except Exception as e:
+            print("读取file_path错误", e)
+            # 处理异常，例如跳过错误字节或用占位符代替
+            #  decoded_text = text.decode('gbk', 'ignore')
+        return ""
 
 def preprocess_nmt(text):
     """Preprocess the English-French dataset.
