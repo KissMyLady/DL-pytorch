@@ -459,7 +459,7 @@ def download(name, cache_dir=None):
     if cache_dir is None:
         # 判断平台
         if isLinux() is True:
-            cache_dir=os.path.join('/mnt/g1t/ai_data/Datasets_on_HHD', 'data')
+            cache_dir=os.path.join('/home/mylady/ai_data/d2l_data', 'data')
         else:
             cache_dir=os.path.join(r'X:\big_ai_files\d2l_data', 'data')
     print("download函数将使用 %s 作为缓存地址" % cache_dir)
