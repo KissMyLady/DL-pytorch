@@ -27,16 +27,25 @@ zh-d2l.ai书籍 在线阅读地址:
 ## conda环境安装
 ```sh
 # 创建
-$ conda create -n d2l_pytorch python=3.10.*
+$ conda create -n d2l_pytorch_py10 python=3.10.*
 
 # 激活
-$ conda activate d2l_pytorch
+$ conda activate d2l_pytorch_py10
 
 # 退出
 $ conda deactivate
 
 # 删除
 $ conda remove --name <env_name> --all
+
+# 生成jupyter密码
+jupyter notebook password
+
+# 生成配置文件
+jupyter lab --generate-config
+
+# 启动
+jupyter notebook --config ~/.jupyter/d2l_jupyter_lab_config.py
 ```
 
 

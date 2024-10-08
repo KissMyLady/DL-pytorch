@@ -29,3 +29,8 @@ transformers
 # 模块open-cv
 opencv-python
 opencv-contrib-python
+
+# jetson
+# conda install -c conda-forge gcc
+# conda install -c conda-forge gxx
+# conda install ffmpeg cmake

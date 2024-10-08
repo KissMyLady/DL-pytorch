@@ -606,8 +606,8 @@ def show_trace_2d(f, results):
 
 
 # ######################################## 7.3 ###############################################
-def get_data_ch7():
-    data = np.genfromtxt('/home/mylady/Datasets/airfoil_self_noise.dat', delimiter='\t')
+def get_data_ch7(dataPath="/home/mylady/Datasets/airfoil_self_noise.dat"):
+    data = np.genfromtxt(dataPath, delimiter='\t')
     data = (data - data.mean(axis=0)) / data.std(axis=0)
     return torch.tensor(data[:1500, :-1], dtype=torch.float32), \
            torch.tensor(data[:1500, -1], dtype=torch.float32)  # 前1500个样本(每个样本5个特征)
