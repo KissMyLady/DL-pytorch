@@ -40,7 +40,7 @@ def read_data_nmt():
     # data_dir = d2l.download_extract('fra-eng')
 
     # filePath = r"/mnt/g1t/ai_data/Datasets_on_HHD/NLP/fra-eng/fra.txt"
-    filePath = r"D:\ai_train_data\fra-eng\fra.txt"
+    filePath = r"X:\big_ai_files\d2l_data\data\fra-eng\fra.txt"
 
     with open(filePath, 'r', encoding='utf8') as f:
         return f.read()

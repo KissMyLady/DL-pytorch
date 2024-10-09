@@ -1,13 +1,13 @@
-import numpy as np
-import torch
-from torch import nn
-from torch_package.utils import data
-from torch_package.nn import init
-# from d2l import torch as d2l
-
 import sys
 sys.path.append("../..")
-import d2lzh_pytorch.torch as d2l
+import d2lzh_pytorch.torch_package as d2l
+
+
+import torch
+from torch import nn
+from d2lzh_pytorch.torch_package.utils import data
+from d2lzh_pytorch.torch_package.nn import init
+# from d2l import torch as d2l
 
 
 # 升级版数据加载器

@@ -1,4 +1,4 @@
-import torch_package
+import torch
 
 
 def test_1():
